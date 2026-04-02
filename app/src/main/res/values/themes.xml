@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.SwachhtaSarthi" parent="Base.Theme.SwachhtaSarthi" />
+
+    <style name="HintSmall" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

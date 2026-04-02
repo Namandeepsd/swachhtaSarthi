@@ -13,7 +13,7 @@
         android:layout_height="160dp"
         android:scaleType="centerCrop"
         android:contentDescription="@null"
-        app:srcCompat="@drawable/LoginSignupHeroImg"
+        app:srcCompat="@drawable/login_signup_hero_img"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -82,7 +82,7 @@
             android:textColor="#000000"
             android:textSize="13sp"
             android:layout_marginTop="10dp"
-            app:icon="@drawable/GoogleLogin"
+            app:icon="@drawable/google_login"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
             app:cornerRadius="8dp"
@@ -261,7 +261,7 @@
             app:boxStrokeColor="#CCCCCC"
             app:hintTextColor="#888888"
             app:layout_constraintTop_toBottomOf="@id/tilPhone"
-            app:layout_constraintStart_toEndOf="@id/tilGender"
+            app:layout_constraintStart_of="@id/tilGender"
             app:layout_constraintEnd_toEndOf="parent">
             <AutoCompleteTextView
                 android:id="@+id/actvDob"
