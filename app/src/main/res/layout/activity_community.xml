@@ -5,228 +5,454 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="723dp"
-        android:layout_height="1476dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-4dp">
+    <!-- Main Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_card"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
+        <!-- Fixed Content Width to prevent shrinking in Editor -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="721dp"
             android:layout_height="wrap_content"
-            android:text="Gurugram"
-            tools:layout_editor_absoluteX="66dp"
-            tools:layout_editor_absoluteY="45dp" />
+            android:minHeight="1501dp"
+            tools:layout_width="721dp">
 
-        <Space
-            android:layout_width="720dp"
-            android:layout_height="91dp"
-            tools:layout_editor_absoluteX="-2dp"
-            tools:layout_editor_absoluteY="6dp" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="62dp"
+                android:layout_height="72dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="5dp"
+                android:contentDescription="logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/logoswachhtasarthi" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="62dp"
-            android:layout_height="72dp"
-            app:srcCompat="@drawable/logoswachhtasarthi"
-            tools:layout_editor_absoluteX="4dp"
-            tools:layout_editor_absoluteY="5dp" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="72dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="66dp"
+                android:layout_marginTop="16dp"
+                android:text="Preeya"
+                android:textSize="23sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="72dp"
-            android:layout_height="29dp"
-            android:text="Preeya"
-            android:textSize="23sp"
-            tools:layout_editor_absoluteX="66dp"
-            tools:layout_editor_absoluteY="16dp" />
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="66dp"
+                android:layout_marginTop="45dp"
+                android:text="Gurugram"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="756dp"
-            android:layout_height="315dp"
-            app:srcCompat="@drawable/cover"
-            tools:layout_editor_absoluteX="-26dp"
-            tools:layout_editor_absoluteY="70dp" />
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="756dp"
+                android:layout_height="315dp"
+                android:layout_marginTop="70dp"
+                android:contentDescription="cover"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cover" />
 
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="124dp"
-            android:layout_height="170dp"
-            app:srcCompat="@drawable/profile_image"
-            tools:layout_editor_absoluteX="24dp"
-            tools:layout_editor_absoluteY="238dp" />
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="124dp"
+                android:layout_height="170dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="238dp"
+                android:contentDescription="profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/profile_image" />
 
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="125dp"
-            android:layout_height="49dp"
-            app:srcCompat="@drawable/message"
-            tools:layout_editor_absoluteX="447dp"
-            tools:layout_editor_absoluteY="376dp" />
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="125dp"
+                android:layout_height="49dp"
+                android:layout_marginStart="447dp"
+                android:layout_marginTop="376dp"
+                android:contentDescription="message"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/message" />
 
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="125dp"
-            android:layout_height="179dp"
-            app:srcCompat="@drawable/follow"
-            tools:layout_editor_absoluteX="558dp"
-            tools:layout_editor_absoluteY="313dp" />
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="135dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="551dp"
+                android:layout_marginTop="364dp"
+                android:contentDescription="follow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/follow" />
 
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="216dp"
-            android:layout_height="49dp"
-            app:srcCompat="@drawable/user_name"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="396dp" />
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="216dp"
+                android:layout_height="49dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="396dp"
+                android:contentDescription="username"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/user_name" />
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="149"
-            android:textStyle="bold"
-            android:textSize="21dp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="465dp" />
+            <TextView
+                android:id="@+id/tvFollowerCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="465dp"
+                android:text="149"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" Followers"
-            android:textSize="21dp"
-            tools:layout_editor_absoluteX="53dp"
-            tools:layout_editor_absoluteY="464dp" />
+            <TextView
+                android:id="@+id/tvFollowerLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="53dp"
+                android:layout_marginTop="464dp"
+                android:text=" Followers"
+                android:textSize="21sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Score:"
-            android:textStyle="bold"
-            android:textSize="21dp"
-            tools:layout_editor_absoluteX="163dp"
-            tools:layout_editor_absoluteY="464dp" />
+            <TextView
+                android:id="@+id/tvScoreLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="163dp"
+                android:layout_marginTop="464dp"
+                android:text="Score:"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" 900"
-            android:textSize="21dp"
-            tools:layout_editor_absoluteX="224dp"
-            tools:layout_editor_absoluteY="464dp" />
+            <TextView
+                android:id="@+id/tvScoreValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="224dp"
+                android:layout_marginTop="464dp"
+                android:text=" 900"
+                android:textSize="21sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Complaint: 18   Resolved: 18   Pending: 8   Volunteered: 4"
-            android:textSize="21sp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="518dp" />
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="540dp"
+                android:text="Complaint: 18   Resolved: 18   Pending: 8   Volunteered: 4"
+                android:textSize="23sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="682dp"
-            android:layout_height="109dp"
-            android:text="A Clean India NGO works towards promoting cleanliness, waste management, and environmental awareness in communities"
-            android:textSize="25sp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="580dp" />
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="682dp"
+                android:layout_height="109dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="612dp"
+                android:text="A Clean India NGO works towards promoting cleanliness, waste management, and environmental awareness in communities"
+                android:textSize="28sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="...Read More"
-            android:textColor="#0000FF"
-            android:textSize="22sp"
-            tools:layout_editor_absoluteX="163dp"
-            tools:layout_editor_absoluteY="640dp" />
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="352dp"
+                android:layout_marginTop="692dp"
+                android:text="...Read More"
+                android:textColor="#0000FF"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Contribution"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="52dp"
-            tools:layout_editor_absoluteY="720dp" />
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="768dp"
+                android:text="Contribution"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/line"
-            tools:layout_editor_absoluteX="97dp"
-            tools:layout_editor_absoluteY="779dp" />
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="828dp"
+                android:contentDescription="line"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/line" />
 
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Issues"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="248dp"
-            tools:layout_editor_absoluteY="721dp" />
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="244dp"
+                android:layout_marginTop="768dp"
+                android:text="Issues"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Highlights"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="374dp"
-            tools:layout_editor_absoluteY="721dp" />
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="376dp"
+                android:layout_marginTop="768dp"
+                android:text="Highlights"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Media"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="551dp"
-            tools:layout_editor_absoluteY="720dp" />
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="548dp"
+                android:layout_marginTop="768dp"
+                android:text="Media"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="693dp"
-            android:layout_height="103dp"
-            app:srcCompat="@drawable/post_profile"
-            tools:layout_editor_absoluteX="4dp"
-            tools:layout_editor_absoluteY="847dp" />
+            <ImageView
+                android:id="@+id/imageView11"
+                android:layout_width="788dp"
+                android:layout_height="496dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="940dp"
+                android:contentDescription="post"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/post" />
 
-        <ImageView
-            android:id="@+id/imageView11"
-            android:layout_width="784dp"
-            android:layout_height="412dp"
-            app:srcCompat="@drawable/post"
-            tools:layout_editor_absoluteX="-55dp"
-            tools:layout_editor_absoluteY="951dp" />
+            <ImageView
+                android:id="@+id/imageView14"
+                android:layout_width="33dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="643dp"
+                android:layout_marginTop="30dp"
+                android:contentDescription="notification"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/notification" />
 
-        <ImageView
-            android:id="@+id/imageView14"
-            android:layout_width="33dp"
-            android:layout_height="25dp"
-            app:srcCompat="@drawable/notification"
-            tools:layout_editor_absoluteX="643dp"
-            tools:layout_editor_absoluteY="30dp" />
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="72dp"
+                android:layout_height="71dp"
+                android:contentDescription="Post Profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="887dp"
+                app:srcCompat="@drawable/post_profile" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="124dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="901dp"
+                android:text="Ravi Gupta"
+                android:textSize="25sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView13"
-        android:layout_width="715dp"
-        android:layout_height="112dp"
-        app:srcCompat="@drawable/footer"
-        tools:layout_editor_absoluteY="1361dp" />
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="930dp"
+                android:text="Rewari,Haryana"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView13"
+                android:layout_width="106dp"
+                android:layout_height="49dp"
+                android:layout_marginStart="570dp"
+                android:layout_marginTop="909dp"
+                android:contentDescription="Result Status"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/result" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Fixed Bottom Navigation Tray -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom_nav_card"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Home Item -->
+            <LinearLayout
+                android:id="@+id/nav_home"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nav_report"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButtonHome"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Home"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/home_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Report Item -->
+            <LinearLayout
+                android:id="@+id/nav_report"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nav_community"
+                app:layout_constraintStart_toEndOf="@+id/nav_home"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButtonReport"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Report"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/Report_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Report"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Community Item -->
+            <LinearLayout
+                android:id="@+id/nav_community"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nav_profile"
+                app:layout_constraintStart_toEndOf="@+id/nav_report"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButtonCommunity"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Community"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/community_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Community"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Profile Item -->
+            <LinearLayout
+                android:id="@+id/nav_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/nav_community"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButtonProfile"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Profile"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/profile_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
