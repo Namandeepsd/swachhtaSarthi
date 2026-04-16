@@ -44,7 +44,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     implementation(libs.recyclerview)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+    implementation(libs.firebase.database)
 
     // Testing
     testImplementation(libs.junit)

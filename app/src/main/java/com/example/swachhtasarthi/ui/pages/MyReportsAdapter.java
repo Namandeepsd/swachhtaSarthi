@@ -1,4 +1,4 @@
-package com.example.swachhtasarthi.ui;
+package com.example.swachhtasarthi.ui.pages;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swachhtasarthi.R;
-import com.example.swachhtasarthi.service.Report;
+import com.example.swachhtasarthi.service.MyReports;
 
 import java.util.List;
 
-public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportViewHolder> {
+public class MyReportsAdapter extends RecyclerView.Adapter<MyReportsAdapter.ReportViewHolder> {
 
-    private List<Report> reportList;
+    private List<MyReports> myReportsList;
 
-    public ReportAdapter(List<Report> reportList) {
-        this.reportList = reportList;
+    public MyReportsAdapter(List<MyReports> myReportsList) {
+        this.myReportsList = myReportsList;
     }
 
     @NonNull
@@ -31,17 +31,17 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
 
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
-        Report report = reportList.get(position);
-        holder.tvTitle.setText(report.getTitle());
-        holder.tvDescription.setText(report.getDescription());
-        holder.tvLocationTime.setText(report.getLocation() + " • " + report.getTime());
-        holder.tvStatus.setText(report.getStatus());
-        holder.ivImage.setImageResource(report.getImageResId());
+        MyReports myReports = myReportsList.get(position);
+        holder.tvTitle.setText(myReports.getTitle());
+        holder.tvDescription.setText(myReports.getDescription());
+        holder.tvLocationTime.setText(myReports.getLocation() + " • " + myReports.getTime());
+        holder.tvStatus.setText(myReports.getStatus());
+        holder.ivImage.setImageResource(myReports.getImageResId());
         
         // Update status background based on text if needed, but for now just text
-        if (report.getStatus().equalsIgnoreCase("PENDING")) {
+        if (myReports.getStatus().equalsIgnoreCase("PENDING")) {
              holder.tvStatus.setBackgroundResource(R.drawable.bg_pending_tag);
-        } else if (report.getStatus().equalsIgnoreCase("IN PROGRESS")) {
+        } else if (myReports.getStatus().equalsIgnoreCase("IN PROGRESS")) {
              // You could add more drawables here
              holder.tvStatus.setBackgroundResource(R.drawable.bg_pending_tag); 
         } else {
@@ -51,7 +51,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
 
     @Override
     public int getItemCount() {
-        return reportList.size();
+        return myReportsList.size();
     }
 
     static class ReportViewHolder extends RecyclerView.ViewHolder {

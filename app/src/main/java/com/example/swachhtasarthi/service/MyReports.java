@@ -1,6 +1,6 @@
 package com.example.swachhtasarthi.service;
 
-public class Report {
+public class MyReports {
     private String title;
     private String description;
     private String location;
@@ -8,7 +8,7 @@ public class Report {
     private String status;
     private int imageResId; // Using resource ID for demo, eventually this will be a URL
 
-    public Report(String title, String description, String location, String time, String status, int imageResId) {
+    public MyReports(String title, String description, String location, String time, String status, int imageResId) {
         this.title = title;
         this.description = description;
         this.location = location;

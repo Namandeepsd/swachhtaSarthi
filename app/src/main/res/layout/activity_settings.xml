@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F8FAFC">
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_tray_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,10 +27,14 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="24dp">
 
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:src="@drawable/profile_image" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/CircleImageView"
+                    app:srcCompat="@drawable/profile_image"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="2dp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -42,16 +46,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Namandeep Singh"
-                        android:textColor="#000000"
-                        android:textSize="20sp"
+                        android:textColor="#1E293B"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Volunteer"
-                        android:textColor="#757575"
-                        android:textSize="14sp" />
+                        android:textColor="#64748B"
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -59,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Account"
-                android:textColor="#000000"
+                android:textColor="#1E293B"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
@@ -67,9 +71,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#F5F5F5"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
+                app:cardElevation="2dp"
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
@@ -82,45 +85,33 @@
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="Profile"
-                        android:textColor="#000000"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
                         app:drawableStartCompat="@android:drawable/ic_menu_myplaces"
                         android:drawablePadding="16dp" />
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="Notifications"
-                        android:textColor="#000000"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
                         app:drawableStartCompat="@android:drawable/ic_popup_reminder"
                         android:drawablePadding="16dp" />
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="Score Metrics"
-                        android:textColor="#000000"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
                         app:drawableStartCompat="@android:drawable/ic_menu_sort_by_size"
-                        android:drawablePadding="16dp" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="Create a Page"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_input_add"
                         android:drawablePadding="16dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -129,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="More"
-                android:textColor="#000000"
+                android:textColor="#1E293B"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
@@ -137,9 +128,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#F5F5F5"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -151,45 +141,33 @@
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="Report a Problem"
-                        android:textColor="#000000"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
                         app:drawableStartCompat="@android:drawable/ic_menu_report_image"
                         android:drawablePadding="16dp" />
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="Know More"
-                        android:textColor="#000000"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
                         app:drawableStartCompat="@android:drawable/ic_menu_info_details"
                         android:drawablePadding="16dp" />
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        android:text="Terms and Conditions"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_dialog_alert"
-                        android:drawablePadding="16dp" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="Delete Account"
+                        android:text="Logout"
                         android:textColor="#D32F2F"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_delete"
+                        app:drawableStartCompat="@android:drawable/ic_lock_power_off"
                         android:drawablePadding="16dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -197,13 +175,12 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/bottom_tray_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
+        <include layout="@layout/component_tray_bottom" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

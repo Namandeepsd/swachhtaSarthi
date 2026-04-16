@@ -2,11 +2,14 @@ package com.example.swachhtasarthi.service;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-public class AuthManager {
+import com.google.firebase.database.FirebaseDatabase;
+
+public class FirebaseManagerAndAuth {
 
     private FirebaseAuth mAuth;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    public AuthManager(){
+    public FirebaseManagerAndAuth(){
         mAuth = FirebaseAuth.getInstance();
     }
 

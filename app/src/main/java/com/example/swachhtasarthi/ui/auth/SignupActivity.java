@@ -1,7 +1,5 @@
 package com.example.swachhtasarthi.ui.auth;
 
-import static java.security.AccessController.getContext;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +7,13 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.swachhtasarthi.ui.HomeActivity;
+import com.example.swachhtasarthi.ui.pages.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.AuthResult;
-import com.example.swachhtasarthi.service.AuthManager;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swachhtasarthi.R;
@@ -29,20 +27,22 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class SignupActivity extends AppCompatActivity {
     EditText etFirstName, etLastName, etEmail, etPhone, etPassword;
     AutoCompleteTextView actvGender, actvDob;
     MaterialButton btnSignup;
-    AuthManager authManager = new AuthManager();
+    TextView tvLogin;
+    FirebaseManagerAndAuth firebaseManagerAndAuth = new FirebaseManagerAndAuth();
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle SavedInstanceState) {
         super.onCreate(SavedInstanceState);
 
-        if (authManager.isUserLoggedIn()) {
+        if (firebaseManagerAndAuth.isUserLoggedIn()) {
             startActivity(new Intent(SignupActivity.this, HomeActivity.class));
             finish();
             return;
@@ -60,11 +60,16 @@ public class SignupActivity extends AppCompatActivity {
         actvDob = findViewById(R.id.actvDob);
 
         btnSignup = findViewById(R.id.btnSignup);
+        tvLogin = findViewById(R.id.tvLogin);
 
         setupGenderSpinner();
         setupDatePicker();
 
         btnSignup.setOnClickListener(v -> handleSignup());
+        tvLogin.setOnClickListener(v -> {
+            startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void setupGenderSpinner() {
@@ -137,17 +142,17 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void signupUser(String email, String password) {
-        authManager.signup(email, password, task -> {
+        firebaseManagerAndAuth.signup(email, password, task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Signup Successful", Toast.LENGTH_SHORT).show();
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 saveUserData(uid);
                 startActivity(new Intent(SignupActivity.this, HomeActivity.class));
                 finish();
             } else {
                 // This will print the detailed error to your logcat
                 Log.e("AUTH_ERROR", "Signup failed", task.getException());
-                Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -176,8 +181,11 @@ public class SignupActivity extends AppCompatActivity {
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "User Data Saved", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+                    finish();
                 })
                 .addOnFailureListener(e -> {
+                    Log.e("FIRESTORE_ERROR", "Error saving data", e);
                     Toast.makeText(this, "Error saving data", Toast.LENGTH_SHORT).show();
                 });
     }
