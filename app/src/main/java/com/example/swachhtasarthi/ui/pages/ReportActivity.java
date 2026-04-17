@@ -35,13 +35,16 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.firestore.FieldValue;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class ReportActivity extends AppCompatActivity {
@@ -49,6 +52,10 @@ public class ReportActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1002;
     private static final int MAX_IMAGES = 3;
+
+    public enum ReportStatus {
+        PENDING, IN_PROGRESS, RESOLVED
+    }
 
     private EditText etLatitude, etLongitude, etAddress, etCity, etPinCode, etDateOfIssue, etTimeOfIssue, etDescription;
     private MaterialButton btnFetchGPS, btnAutoFillAddress, btnPost;
@@ -181,9 +188,46 @@ public class ReportActivity extends AppCompatActivity {
         etDateOfIssue.setOnClickListener(v -> showDatePicker());
         etTimeOfIssue.setOnClickListener(v -> showTimePicker());
 
-        btnPost.setOnClickListener(v -> {
-            Toast.makeText(this, "Issue Reported Successfully!", Toast.LENGTH_SHORT).show();
-            finish();
+        btnPost.setOnClickListener(v -> submitReportToFirestore());
+    }
+
+    private void submitReportToFirestore() {
+        String description = etDescription.getText().toString().trim();
+        if (description.isEmpty()) {
+            Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> reportData = new HashMap<>();
+        reportData.put("userId", firebaseManagerAndAuth.getCurrentUserUid());
+        reportData.put("latitude", etLatitude.getText().toString());
+        reportData.put("longitude", etLongitude.getText().toString());
+        reportData.put("address", etAddress.getText().toString());
+        reportData.put("city", etCity.getText().toString());
+        reportData.put("pinCode", etPinCode.getText().toString());
+        reportData.put("dateOfIssue", etDateOfIssue.getText().toString());
+        reportData.put("timeOfIssue", etTimeOfIssue.getText().toString());
+        reportData.put("description", description);
+        reportData.put("status", ReportStatus.PENDING.name());
+        reportData.put("createdAt", FieldValue.serverTimestamp());
+
+        // Note: Real apps should upload images to Firebase Storage and store URLs.
+        // Storing local URIs as strings will only work on the same device.
+        List<String> imageUris = new ArrayList<>();
+        for (Uri uri : selectedImages) {
+            imageUris.add(uri.toString());
+        }
+        reportData.put("imageUris", imageUris);
+
+        btnPost.setEnabled(false);
+        firebaseManagerAndAuth.submitReport(reportData, task -> {
+            btnPost.setEnabled(true);
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Issue Reported Successfully!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to report issue: " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

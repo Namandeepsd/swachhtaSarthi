@@ -10,18 +10,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.swachhtasarthi.ui.pages.HomeActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swachhtasarthi.R;
+import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
+import com.example.swachhtasarthi.ui.pages.HomeActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -39,8 +38,8 @@ public class SignupActivity extends AppCompatActivity {
 
     @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle SavedInstanceState) {
-        super.onCreate(SavedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         if (firebaseManagerAndAuth.isUserLoggedIn()) {
             startActivity(new Intent(SignupActivity.this, HomeActivity.class));
@@ -80,7 +79,6 @@ public class SignupActivity extends AppCompatActivity {
 
     private void setupDatePicker() {
         actvDob.setOnClickListener(v -> {
-            // Setting a reasonable default selection (e.g., year 2000) so the user doesn't start at the current year.
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             calendar.set(2000, Calendar.JANUARY, 1);
             long selection = calendar.getTimeInMillis();
@@ -107,7 +105,6 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    //Cleaning and Trimming and Performing Validations
     private void handleSignup() {
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
@@ -116,8 +113,6 @@ public class SignupActivity extends AppCompatActivity {
         String gender = actvGender.getText().toString().trim();
         String dob = actvDob.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-
-        Log.d("SIGNUP_DATA", firstName + " " + lastName + " " + email);
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()
                 || phone.isEmpty() || gender.isEmpty()
@@ -144,13 +139,9 @@ public class SignupActivity extends AppCompatActivity {
     private void signupUser(String email, String password) {
         firebaseManagerAndAuth.signup(email, password, task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(this, "Signup Successful", Toast.LENGTH_SHORT).show();
                 String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 saveUserData(uid);
-                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
-                finish();
             } else {
-                // This will print the detailed error to your logcat
                 Log.e("AUTH_ERROR", "Signup failed", task.getException());
                 Toast.makeText(this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -158,35 +149,28 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void saveUserData(String uid) {
-        String firstName = etFirstName.getText().toString().trim();
-        String lastName = etLastName.getText().toString().trim();
-        String email = etEmail.getText().toString().trim();
-        String phone = etPhone.getText().toString().trim();
-        String gender = actvGender.getText().toString().trim();
-        String dob = actvDob.getText().toString().trim();
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         Map<String, Object> user = new HashMap<>();
         user.put("uid", uid);
-        user.put("firstName", firstName);
-        user.put("lastName", lastName);
-        user.put("email", email);
-        user.put("phone", phone);
-        user.put("gender", gender);
-        user.put("dob", dob);
+        user.put("firstName", etFirstName.getText().toString().trim());
+        user.put("lastName", etLastName.getText().toString().trim());
+        user.put("email", etEmail.getText().toString().trim());
+        user.put("phone", etPhone.getText().toString().trim());
+        user.put("gender", actvGender.getText().toString().trim());
+        user.put("dob", actvDob.getText().toString().trim());
+        user.put("score", 0);
+        user.put("complaints", 0);
+        user.put("resolved", 0);
+        user.put("pending", 0);
 
-        db.collection("users")
-                .document(uid)
-                .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "User Data Saved", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SignupActivity.this, HomeActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("FIRESTORE_ERROR", "Error saving data", e);
-                    Toast.makeText(this, "Error saving data", Toast.LENGTH_SHORT).show();
-                });
+        firebaseManagerAndAuth.saveUserData(uid, user, task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Signup Successful", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+                finish();
+            } else {
+                Log.e("FIRESTORE_ERROR", "Error saving data", task.getException());
+                Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.ui.pages.CommunityActivity;
+import com.example.swachhtasarthi.ui.pages.FeedActivity;
 import com.example.swachhtasarthi.ui.pages.HomeActivity;
 import com.example.swachhtasarthi.ui.pages.ProfileActivity;
 import com.example.swachhtasarthi.ui.pages.ReportActivity;
@@ -30,7 +31,7 @@ public class BottomTrayHandler {
         LinearLayout navProfile = activity.findViewById(R.id.nav_profile);
 
         if (navHome != null) navHome.setOnClickListener(v -> navigate(HomeActivity.class));
-        if (navReport != null) navReport.setOnClickListener(v -> navigate(ReportActivity.class));
+        if (navReport != null) navReport.setOnClickListener(v -> navigate(FeedActivity.class));
         if (navCommunity != null) navCommunity.setOnClickListener(v -> navigate(CommunityActivity.class));
         if (navProfile != null) navProfile.setOnClickListener(v -> navigate(ProfileActivity.class));
 
@@ -58,7 +59,7 @@ public class BottomTrayHandler {
         // Highlight the current activity tab
         if (activity instanceof HomeActivity) {
             updateTabUI(R.id.imageButtonHome, R.id.textViewHome, COLOR_ACTIVE);
-        } else if (activity instanceof ReportActivity) {
+        } else if (activity instanceof FeedActivity || activity instanceof ReportActivity) {
             updateTabUI(R.id.imageButtonReport, R.id.textViewReport, COLOR_ACTIVE);
         } else if (activity instanceof CommunityActivity) {
             updateTabUI(R.id.imageButtonCommunity, R.id.textViewCommunity, COLOR_ACTIVE);

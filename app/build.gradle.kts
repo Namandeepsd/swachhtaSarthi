@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.swachhtasarthi"
-        minSdk = 28
-        targetSdk = 36
+        minSdk = 24
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.recyclerview)
     implementation("org.osmdroid:osmdroid-android:6.1.18")
+    implementation("com.github.imagekit-developer:imagekit-android:3.0.1")
     implementation(libs.firebase.database)
 
     // Testing

@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,12 +42,13 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2001;
 
-    FirebaseManagerAndAuth firebaseManagerAndAuth = new FirebaseManagerAndAuth();
+    FirebaseManagerAndAuth authManager = new FirebaseManagerAndAuth();
     RecyclerView rvReports;
     private View btnReport;
     private MapView mapView;
     private TextView tvUserName;
     private TextView tvUserLocation;
+    private ImageView ivNotification;
     private FusedLocationProviderClient fusedLocationClient;
 
     MyReportsAdapter myReportsAdapter;
@@ -55,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!firebaseManagerAndAuth.isUserLoggedIn()) {
+        if (!authManager.isUserLoggedIn()) {
             Intent intent = new Intent(HomeActivity.this, SignupActivity.class);
             startActivity(intent);
             finish();
@@ -69,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapView);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserLocation = findViewById(R.id.tvUserLocation);
+        ivNotification = findViewById(R.id.ivNotification);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         BottomTrayHandler bottomTrayHandler = new BottomTrayHandler(this);
 
@@ -80,6 +83,13 @@ public class HomeActivity extends AppCompatActivity {
         if (btnReport != null) {
             btnReport.setOnClickListener(v -> {
                 Intent intent = new Intent(HomeActivity.this, ReportActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (ivNotification != null) {
+            ivNotification.setOnClickListener(v -> {
+                Intent intent = new Intent(HomeActivity.this, NotificationActivity.class);
                 startActivity(intent);
             });
         }
@@ -115,7 +125,6 @@ public class HomeActivity extends AppCompatActivity {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         
-        // Use default value while loading
         if (tvUserName != null) tvUserName.setText("User");
 
         FirebaseFirestore.getInstance().collection("users")
