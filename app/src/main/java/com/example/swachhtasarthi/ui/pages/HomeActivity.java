@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
-import com.example.swachhtasarthi.service.MyReports;
+import com.example.swachhtasarthi.model.MyReports;
 import com.example.swachhtasarthi.ui.auth.SignupActivity;
 import com.example.swachhtasarthi.ui.components.BottomTrayHandler;
 import com.google.android.gms.location.FusedLocationProviderClient;

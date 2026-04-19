@@ -1,4 +1,4 @@
-package com.example.swachhtasarthi.service;
+package com.example.swachhtasarthi.model;
 
 public class MyReports {
     private String title;
