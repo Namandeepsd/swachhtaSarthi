@@ -137,6 +137,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvReportProblem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -161,6 +162,7 @@
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
+                        android:id="@+id/tvLogout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
