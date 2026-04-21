@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.swachhtasarthi.BuildConfig;
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
 import com.example.swachhtasarthi.ui.auth.SignupActivity;
@@ -35,9 +37,24 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.google.firebase.firestore.FieldValue;
+import com.imagekit.android.ImageKit;
+import com.imagekit.android.ImageKitCallback;
+import com.imagekit.android.entity.UploadError;
+import com.imagekit.android.entity.UploadResponse;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,16 +63,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ReportActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1002;
     private static final int MAX_IMAGES = 3;
-
-    public enum ReportStatus {
-        PENDING, IN_PROGRESS, RESOLVED
-    }
+    private static final String IMAGEKIT_UPLOAD_FOLDER = "/reports/";
+    private static final String IMAGEKIT_UPLOAD_API = "https://upload.imagekit.io/api/v1/files/upload";
+    private static final ExecutorService NETWORK_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private EditText etLatitude, etLongitude, etAddress, etCity, etPinCode, etDateOfIssue, etTimeOfIssue, etDescription;
     private MaterialButton btnFetchGPS, btnAutoFillAddress, btnPost;
@@ -188,45 +206,282 @@ public class ReportActivity extends AppCompatActivity {
         etDateOfIssue.setOnClickListener(v -> showDatePicker());
         etTimeOfIssue.setOnClickListener(v -> showTimePicker());
 
-        btnPost.setOnClickListener(v -> submitReportToFirestore());
+        btnPost.setOnClickListener(v -> submitReport());
     }
 
-    private void submitReportToFirestore() {
-        String description = etDescription.getText().toString().trim();
-        if (description.isEmpty()) {
-            Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show();
+    private void submitReport() {
+        String uid = firebaseManagerAndAuth.getCurrentUserUid();
+        if (uid == null || uid.trim().isEmpty()) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, Object> reportData = new HashMap<>();
-        reportData.put("userId", firebaseManagerAndAuth.getCurrentUserUid());
-        reportData.put("latitude", etLatitude.getText().toString());
-        reportData.put("longitude", etLongitude.getText().toString());
-        reportData.put("address", etAddress.getText().toString());
-        reportData.put("city", etCity.getText().toString());
-        reportData.put("pinCode", etPinCode.getText().toString());
-        reportData.put("dateOfIssue", etDateOfIssue.getText().toString());
-        reportData.put("timeOfIssue", etTimeOfIssue.getText().toString());
-        reportData.put("description", description);
-        reportData.put("status", ReportStatus.PENDING.name());
-        reportData.put("createdAt", FieldValue.serverTimestamp());
+        String latitude = etLatitude.getText().toString().trim();
+        String longitude = etLongitude.getText().toString().trim();
+        String address = etAddress.getText().toString().trim();
+        String city = etCity.getText().toString().trim();
+        String pinCode = etPinCode.getText().toString().trim();
+        String dateOfIssue = etDateOfIssue.getText().toString().trim();
+        String timeOfIssue = etTimeOfIssue.getText().toString().trim();
+        String description = etDescription.getText().toString().trim();
 
-        // Note: Real apps should upload images to Firebase Storage and store URLs.
-        // Storing local URIs as strings will only work on the same device.
+        if (description.isEmpty() || address.isEmpty() || city.isEmpty()) {
+            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         List<String> imageUris = new ArrayList<>();
         for (Uri uri : selectedImages) {
-            imageUris.add(uri.toString());
+            if (uri != null) {
+                imageUris.add(uri.toString());
+            }
         }
-        reportData.put("imageUris", imageUris);
+
+        Map<String, Object> reportData = new HashMap<>();
+        reportData.put("userId", uid);
+        reportData.put("latitude", latitude);
+        reportData.put("longitude", longitude);
+        reportData.put("address", address);
+        reportData.put("city", city);
+        reportData.put("pinCode", pinCode);
+        reportData.put("dateOfIssue", dateOfIssue);
+        reportData.put("timeOfIssue", timeOfIssue);
+        reportData.put("description", description);
+        reportData.put("status", "PENDING");
+        reportData.put("likes", 0);
+        reportData.put("upvoteCount", 0);
+        reportData.put("commentCount", 0);
+        reportData.put("createdAt", System.currentTimeMillis());
 
         btnPost.setEnabled(false);
+
+        uploadImagesAndSubmitReport(uid, imageUris, reportData);
+    }
+
+    private void uploadImagesAndSubmitReport(String uid, List<String> localImageUris, Map<String, Object> reportData) {
+        if (localImageUris == null || localImageUris.isEmpty()) {
+            reportData.put("imageUris", new ArrayList<String>());
+            submitPreparedReport(reportData);
+            return;
+        }
+
+        List<String> nonEmptyUris = new ArrayList<>();
+        for (String uri : localImageUris) {
+            if (uri != null && !uri.trim().isEmpty()) {
+                nonEmptyUris.add(uri);
+            }
+        }
+
+        if (nonEmptyUris.isEmpty()) {
+            reportData.put("imageUris", new ArrayList<String>());
+            submitPreparedReport(reportData);
+            return;
+        }
+
+        uploadReportImageAtIndex(uid, nonEmptyUris, 0, new ArrayList<>(), reportData);
+    }
+
+    private void uploadReportImageAtIndex(
+            String uid,
+            List<String> localImageUris,
+            int index,
+            List<String> uploadedUrls,
+            Map<String, Object> reportData
+    ) {
+        if (index >= localImageUris.size()) {
+            reportData.put("imageUris", uploadedUrls);
+            if (!uploadedUrls.isEmpty()) {
+                reportData.put("imageUrl", uploadedUrls.get(0));
+            }
+            submitPreparedReport(reportData);
+            return;
+        }
+
+        Uri imageUri = Uri.parse(localImageUris.get(index));
+        String filename = "report_" + uid + "_" + System.currentTimeMillis() + "_" + index;
+
+        uploadToImageKit(imageUri, filename, new ImageKitUploadCallback() {
+            @Override
+            public void onSuccess(String url) {
+                uploadedUrls.add(url);
+                uploadReportImageAtIndex(uid, localImageUris, index + 1, uploadedUrls, reportData);
+            }
+
+            @Override
+            public void onError(String error) {
+                btnPost.setEnabled(true);
+                Toast.makeText(ReportActivity.this, "Image upload failed: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void uploadToImageKit(Uri uri, String filename, ImageKitUploadCallback callback) {
+        // No-backend direct upload mode using private key from BuildConfig.
+        if (BuildConfig.IMAGEKIT_PRIVATE_KEY == null || BuildConfig.IMAGEKIT_PRIVATE_KEY.trim().isEmpty()) {
+            callback.onError("ImageKit private key not configured");
+            return;
+        }
+
+        File uploadFile;
+        try {
+            uploadFile = createTempFileFromUri(uri, filename);
+        } catch (IOException e) {
+            callback.onError("Unable to prepare image for upload");
+            return;
+        }
+
+        NETWORK_EXECUTOR.execute(() -> {
+            try {
+                String uploadedUrl = uploadFileToImageKit(uploadFile, filename);
+                runOnUiThread(() -> {
+                    safeDeleteTempFile(uploadFile);
+                    callback.onSuccess(uploadedUrl);
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    safeDeleteTempFile(uploadFile);
+                    callback.onError(e.getMessage() == null ? "Upload failed" : e.getMessage());
+                });
+            }
+        });
+    }
+
+    private String uploadFileToImageKit(File uploadFile, String filename) throws IOException {
+        HttpURLConnection connection = null;
+        try {
+            String privateKey = BuildConfig.IMAGEKIT_PRIVATE_KEY;
+            String authRaw = privateKey + ":";
+            String authHeader = "Basic " + Base64.encodeToString(authRaw.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+
+            byte[] imageBytes = readFileBytes(uploadFile);
+            String mimeType = "image/jpeg";
+            String base64 = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+            String dataUri = "data:" + mimeType + ";base64," + base64;
+
+            String body = "file=" + URLEncoder.encode(dataUri, "UTF-8")
+                    + "&fileName=" + URLEncoder.encode(filename, "UTF-8")
+                    + "&folder=" + URLEncoder.encode(IMAGEKIT_UPLOAD_FOLDER, "UTF-8")
+                    + "&useUniqueFileName=true";
+
+            URL url = new URL(IMAGEKIT_UPLOAD_API);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setConnectTimeout(20000);
+            connection.setReadTimeout(40000);
+            connection.setRequestProperty("Authorization", authHeader);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            connection.getOutputStream().write(body.getBytes(StandardCharsets.UTF_8));
+            connection.getOutputStream().flush();
+            connection.getOutputStream().close();
+
+            int code = connection.getResponseCode();
+            InputStream responseStream = code >= 200 && code < 300
+                    ? connection.getInputStream()
+                    : connection.getErrorStream();
+
+            String responseBody = readStream(responseStream);
+            if (code < 200 || code >= 300) {
+                throw new IOException("ImageKit upload failed: " + responseBody);
+            }
+
+            JSONObject json = new JSONObject(responseBody);
+            String urlText = json.optString("url", "");
+            if (urlText == null || urlText.trim().isEmpty()) {
+                throw new IOException("ImageKit response missing URL");
+            }
+            return urlText;
+        } catch (Exception e) {
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            }
+            throw new IOException(e.getMessage() == null ? "ImageKit upload error" : e.getMessage(), e);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    private byte[] readFileBytes(File file) throws IOException {
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            byte[] buffer = new byte[8 * 1024];
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            int read;
+            while ((read = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, read);
+            }
+            return bos.toByteArray();
+        } finally {
+            fis.close();
+        }
+    }
+
+    private File createTempFileFromUri(Uri uri, String baseName) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new IOException("Cannot open input stream");
+        }
+
+        File tempFile = new File(getCacheDir(), baseName + "_" + System.currentTimeMillis() + ".jpg");
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+        try {
+            byte[] buffer = new byte[8 * 1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignored) {
+            }
+            try {
+                outputStream.close();
+            } catch (IOException ignored) {
+            }
+        }
+
+        return tempFile;
+    }
+
+    private String readStream(InputStream stream) throws IOException {
+        if (stream == null) {
+            return "";
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        return builder.toString();
+    }
+
+    private void safeDeleteTempFile(File file) {
+        if (file == null) return;
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void submitPreparedReport(Map<String, Object> reportData) {
         firebaseManagerAndAuth.submitReport(reportData, task -> {
             btnPost.setEnabled(true);
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Issue Reported Successfully!", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Toast.makeText(this, "Failed to report issue: " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"), Toast.LENGTH_SHORT).show();
+                String message = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                Toast.makeText(this, "Failed to post report: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -398,5 +653,11 @@ public class ReportActivity extends AppCompatActivity {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    interface ImageKitUploadCallback {
+        void onSuccess(String url);
+
+        void onError(String error);
     }
 }

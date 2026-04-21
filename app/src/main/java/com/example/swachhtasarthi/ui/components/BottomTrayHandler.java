@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.ui.pages.CommunityActivity;
+import com.example.swachhtasarthi.ui.pages.CommunityUserDisplayActivity;
 import com.example.swachhtasarthi.ui.pages.FeedActivity;
 import com.example.swachhtasarthi.ui.pages.HomeActivity;
 import com.example.swachhtasarthi.ui.pages.ProfileActivity;
@@ -61,7 +62,7 @@ public class BottomTrayHandler {
             updateTabUI(R.id.imageButtonHome, R.id.textViewHome, COLOR_ACTIVE);
         } else if (activity instanceof FeedActivity || activity instanceof ReportActivity) {
             updateTabUI(R.id.imageButtonReport, R.id.textViewReport, COLOR_ACTIVE);
-        } else if (activity instanceof CommunityActivity) {
+        } else if (activity instanceof CommunityUserDisplayActivity || activity instanceof CommunityActivity) {
             updateTabUI(R.id.imageButtonCommunity, R.id.textViewCommunity, COLOR_ACTIVE);
         } else if (activity instanceof ProfileActivity) {
             updateTabUI(R.id.imageButtonProfile, R.id.textViewProfile, COLOR_ACTIVE);

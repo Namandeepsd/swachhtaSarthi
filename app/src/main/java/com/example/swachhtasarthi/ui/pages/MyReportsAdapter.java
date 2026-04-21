@@ -10,7 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swachhtasarthi.R;
-import com.example.swachhtasarthi.model.MyReports;
+import com.example.swachhtasarthi.service.MyReports;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -33,20 +34,42 @@ public class MyReportsAdapter extends RecyclerView.Adapter<MyReportsAdapter.Repo
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
         MyReports myReports = myReportsList.get(position);
         holder.tvTitle.setText(myReports.getTitle());
-        holder.tvDescription.setText(myReports.getDescription());
-        holder.tvLocationTime.setText(myReports.getLocation() + " • " + myReports.getTime());
-        holder.tvStatus.setText(myReports.getStatus());
-        holder.ivImage.setImageResource(myReports.getImageResId());
+        holder.tvDescription.setText(toSingleLineEllipsized(myReports.getDescription(), 55));
+
+        String shortLocation = toSingleLineEllipsized(myReports.getLocation(), 32);
+        holder.tvLocationTime.setText(shortLocation + " • " + myReports.getTime());
+        String status = myReports.getStatus() == null ? "PENDING" : myReports.getStatus();
+        holder.tvStatus.setText(status);
         
-        // Update status background based on text if needed, but for now just text
-        if (myReports.getStatus().equalsIgnoreCase("PENDING")) {
+        if (myReports.getImageUrl() != null && !myReports.getImageUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(myReports.getImageUrl())
+                    .placeholder(R.drawable.login_signup_hero_img)
+                    .error(R.drawable.login_signup_hero_img)
+                    .centerCrop()
+                    .into(holder.ivImage);
+        } else {
+            holder.ivImage.setImageResource(R.drawable.login_signup_hero_img);
+        }
+        
+        if ("PENDING".equalsIgnoreCase(status)) {
              holder.tvStatus.setBackgroundResource(R.drawable.bg_pending_tag);
-        } else if (myReports.getStatus().equalsIgnoreCase("IN PROGRESS")) {
-             // You could add more drawables here
+        } else if ("IN PROGRESS".equalsIgnoreCase(status)) {
              holder.tvStatus.setBackgroundResource(R.drawable.bg_pending_tag); 
         } else {
              holder.tvStatus.setBackgroundResource(R.drawable.bg_pending_tag);
         }
+    }
+
+    private String toSingleLineEllipsized(String text, int maxChars) {
+        if (text == null) return "";
+
+        String singleLine = text.replace("\n", " ").replaceAll("\\s+", " ").trim();
+        if (singleLine.length() <= maxChars) {
+            return singleLine;
+        }
+
+        return singleLine.substring(0, Math.max(0, maxChars - 3)).trim() + "...";
     }
 
     @Override

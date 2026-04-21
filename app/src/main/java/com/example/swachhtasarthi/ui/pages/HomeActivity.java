@@ -3,9 +3,11 @@ package com.example.swachhtasarthi.ui.pages;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +29,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -37,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -46,12 +51,21 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView rvReports;
     private View btnReport;
     private MapView mapView;
+    private View btnZoomIn;
+    private View btnZoomOut;
+    private View btnMyLocation;
+    private TextView tvNearestDistance;
     private TextView tvUserName;
     private TextView tvUserLocation;
     private ImageView ivNotification;
     private FusedLocationProviderClient fusedLocationClient;
+    private Marker userLocationMarker;
+    private GeoPoint currentUserPoint;
+    private final List<Marker> reportMarkers = new ArrayList<>();
+    private final List<GeoPoint> pendingReportPoints = new ArrayList<>();
 
     MyReportsAdapter myReportsAdapter;
+    List<MyReports> myReportsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +83,10 @@ public class HomeActivity extends AppCompatActivity {
         btnReport = findViewById(R.id.btnReport);
         rvReports = findViewById(R.id.rvReports);
         mapView = findViewById(R.id.mapView);
+        btnZoomIn = findViewById(R.id.btnZoomIn);
+        btnZoomOut = findViewById(R.id.btnZoomOut);
+        btnMyLocation = findViewById(R.id.btnMyLocation);
+        tvNearestDistance = findViewById(R.id.tvNearestDistance);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserLocation = findViewById(R.id.tvUserLocation);
         ivNotification = findViewById(R.id.ivNotification);
@@ -77,8 +95,10 @@ public class HomeActivity extends AppCompatActivity {
 
         bottomTrayHandler.setup();
         setupOpenStreetMap();
+        setupMapControls();
         loadLoggedInUserInNavbar();
         requestLocationAndShowOnMap();
+        fetchPendingReportsForMap();
 
         if (btnReport != null) {
             btnReport.setOnClickListener(v -> {
@@ -95,15 +115,71 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         rvReports.setLayoutManager(new LinearLayoutManager(this));
-
-        // Adding Dummy Data for display
-        List<MyReports> myReports = new ArrayList<>();
-        myReports.add(new MyReports("Alwar Bypass", "Overflowing waste bins near main road.", "Sector 6, Bhiwadi", "5 mins ago", "PENDING", R.drawable.login_signup_hero_img));
-        myReports.add(new MyReports("Sidhrawali, Dharuhera", "Illegal dumping of construction materials.", "North Park", "2 hours ago", "IN PROGRESS", R.drawable.login_signup_hero_img));
-        myReports.add(new MyReports("Nai Wali, Rewari", "Overflowed Garbage Bins collected.", "Sabzi Mandi", "Yesterday", "RESOLVED", R.drawable.login_signup_hero_img));
-
-        myReportsAdapter = new MyReportsAdapter(myReports);
+        myReportsAdapter = new MyReportsAdapter(myReportsList);
         rvReports.setAdapter(myReportsAdapter);
+
+        fetchMyReports();
+    }
+
+    private void fetchMyReports() {
+        String uid = authManager.getCurrentUserUid();
+        if (uid == null) return;
+
+        FirebaseFirestore.getInstance().collection("reports")
+                .whereEqualTo("userId", uid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    myReportsList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        String description = valueOrFallback(doc.getString("description"), "No description");
+                        String address = valueOrFallback(doc.getString("address"), doc.getString("location"));
+                        String city = valueOrFallback(doc.getString("city"), doc.getString("title"));
+                        String date = valueOrFallback(doc.getString("dateOfIssue"), "Date unavailable");
+                        String status = valueOrFallback(doc.getString("status"), "PENDING");
+
+                        String firstImage = extractFirstImage(doc);
+                        String title = valueOrFallback(city, "Report");
+                        String location = valueOrFallback(address, "Unknown Location");
+
+                        myReportsList.add(new MyReports(title, description, location, date, status, firstImage));
+                    }
+                    myReportsAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error fetching reports: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private String valueOrFallback(String value, String fallback) {
+        return (value != null && !value.trim().isEmpty()) ? value : fallback;
+    }
+
+    private String extractFirstImage(QueryDocumentSnapshot doc) {
+        Object imageUrisObj = doc.get("imageUris");
+        if (imageUrisObj instanceof List) {
+            List<?> images = (List<?>) imageUrisObj;
+            if (!images.isEmpty() && images.get(0) != null) {
+                return String.valueOf(images.get(0));
+            }
+        }
+
+        String imageUrl = doc.getString("imageUrl");
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            return imageUrl;
+        }
+
+        Object imagesObj = doc.get("images");
+        if (imagesObj instanceof List) {
+            List<?> images = (List<?>) imagesObj;
+            if (!images.isEmpty() && images.get(0) instanceof Map) {
+                Object url = ((Map<?, ?>) images.get(0)).get("url");
+                if (url != null) {
+                    return String.valueOf(url);
+                }
+            }
+        }
+
+        return "";
     }
 
     private void setupOpenStreetMap() {
@@ -112,10 +188,49 @@ public class HomeActivity extends AppCompatActivity {
 
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
+        mapView.setBuiltInZoomControls(false);
         mapView.getController().setZoom(15.0);
+        mapView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                v.getParent().requestDisallowInterceptTouchEvent(false);
+            }
+            return false;
+        });
 
         GeoPoint defaultPoint = new GeoPoint(28.6139, 77.2090);
         mapView.getController().setCenter(defaultPoint);
+    }
+
+    private void setupMapControls() {
+        if (btnZoomIn != null) {
+            btnZoomIn.setOnClickListener(v -> {
+                if (mapView != null) {
+                    mapView.getController().zoomIn();
+                }
+            });
+        }
+
+        if (btnZoomOut != null) {
+            btnZoomOut.setOnClickListener(v -> {
+                if (mapView != null) {
+                    mapView.getController().zoomOut();
+                }
+            });
+        }
+
+        if (btnMyLocation != null) {
+            btnMyLocation.setOnClickListener(v -> centerOnCurrentUser());
+        }
+    }
+
+    private void centerOnCurrentUser() {
+        if (currentUserPoint != null && mapView != null) {
+            mapView.getController().animateTo(currentUserPoint);
+            return;
+        }
+        requestLocationAndShowOnMap();
     }
 
     private void loadLoggedInUserInNavbar() {
@@ -174,18 +289,135 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             GeoPoint userPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            currentUserPoint = userPoint;
             mapView.getController().animateTo(userPoint);
 
-            mapView.getOverlays().clear();
-            Marker marker = new Marker(mapView);
-            marker.setPosition(userPoint);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setTitle("You are here");
-            mapView.getOverlays().add(marker);
+            if (userLocationMarker == null) {
+                userLocationMarker = new Marker(mapView);
+                userLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                userLocationMarker.setTitle("You are here");
+                mapView.getOverlays().add(userLocationMarker);
+            }
+
+            userLocationMarker.setPosition(userPoint);
             mapView.invalidate();
+            updateNearestDistanceBadge();
 
             updateNavbarCity(location.getLatitude(), location.getLongitude());
         });
+    }
+
+    private void fetchPendingReportsForMap() {
+        String currentUid = authManager.getCurrentUserUid();
+        if (currentUid == null) return;
+
+        FirebaseFirestore.getInstance().collection("reports")
+                .whereEqualTo("status", "PENDING")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    clearReportMarkers();
+                    pendingReportPoints.clear();
+
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Double lat = toDouble(doc.get("latitude"));
+                        Double lon = toDouble(doc.get("longitude"));
+                        if (lat == null || lon == null) {
+                            continue;
+                        }
+
+                        String reportOwnerId = valueOrFallback(doc.getString("userId"), "");
+                        boolean isCurrentUsersReport = currentUid.equals(reportOwnerId);
+
+                        String city = valueOrFallback(doc.getString("city"), "Reported Location");
+                        String address = valueOrFallback(doc.getString("address"), "No address");
+                        String description = valueOrFallback(doc.getString("description"), "No description");
+
+                        Marker marker = new Marker(mapView);
+                        GeoPoint reportPoint = new GeoPoint(lat, lon);
+                        marker.setPosition(reportPoint);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                        marker.setTitle(city);
+                        marker.setSubDescription(address);
+
+                        Drawable pin = ContextCompat.getDrawable(
+                                this,
+                                isCurrentUsersReport ? R.drawable.map_pin_my_report : R.drawable.map_pin_other_report
+                        );
+                        if (pin != null) {
+                            marker.setIcon(pin);
+                        }
+
+                        String reportId = doc.getId();
+                        marker.setOnMarkerClickListener((clickedMarker, mapView) -> {
+                            Intent volunteerIntent = new Intent(HomeActivity.this, VolunteerActivity.class);
+                            volunteerIntent.putExtra("reportId", reportId);
+                            volunteerIntent.putExtra("reportOwnerId", reportOwnerId);
+                            volunteerIntent.putExtra("city", city);
+                            volunteerIntent.putExtra("address", address);
+                            volunteerIntent.putExtra("description", description);
+                            startActivity(volunteerIntent);
+                            return true;
+                        });
+
+                        reportMarkers.add(marker);
+                        pendingReportPoints.add(reportPoint);
+                        mapView.getOverlays().add(marker);
+                    }
+
+                    updateNearestDistanceBadge();
+                    mapView.invalidate();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load report locations", Toast.LENGTH_SHORT).show());
+    }
+
+    private void updateNearestDistanceBadge() {
+        if (tvNearestDistance == null) return;
+
+        if (currentUserPoint == null || pendingReportPoints.isEmpty()) {
+            tvNearestDistance.setText("--");
+            return;
+        }
+
+        double minMeters = Double.MAX_VALUE;
+        for (GeoPoint point : pendingReportPoints) {
+            if (point == null) continue;
+            double distance = currentUserPoint.distanceToAsDouble(point);
+            if (distance < minMeters) {
+                minMeters = distance;
+            }
+        }
+
+        if (minMeters == Double.MAX_VALUE) {
+            tvNearestDistance.setText("--");
+            return;
+        }
+
+        if (minMeters < 1000) {
+            tvNearestDistance.setText(String.format(Locale.getDefault(), "%dm", (int) Math.round(minMeters)));
+        } else {
+            tvNearestDistance.setText(String.format(Locale.getDefault(), "%.1fkm", (minMeters / 1000.0)));
+        }
+    }
+
+    private void clearReportMarkers() {
+        if (reportMarkers.isEmpty()) return;
+        mapView.getOverlays().removeAll(reportMarkers);
+        reportMarkers.clear();
+    }
+
+    private Double toDouble(Object value) {
+        if (value == null) return null;
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+
+        try {
+            String text = String.valueOf(value).trim();
+            if (text.isEmpty()) return null;
+            return Double.parseDouble(text);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     private void updateNavbarCity(double latitude, double longitude) {
@@ -211,6 +443,8 @@ public class HomeActivity extends AppCompatActivity {
         if (mapView != null) {
             mapView.onResume();
         }
+        fetchMyReports(); // Refresh reports when returning to Home
+        fetchPendingReportsForMap();
     }
 
     @Override

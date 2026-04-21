@@ -2,6 +2,7 @@ package com.example.swachhtasarthi.ui.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,12 +13,22 @@ import com.example.swachhtasarthi.model.FeedItem;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
 import com.example.swachhtasarthi.ui.auth.SignupActivity;
 import com.example.swachhtasarthi.ui.components.BottomTrayHandler;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity {
     private final FirebaseManagerAndAuth authManager = new FirebaseManagerAndAuth();
+    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+    private final List<FeedItem> feedItems = new ArrayList<>();
+    private FeedAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +49,206 @@ public class FeedActivity extends AppCompatActivity {
         RecyclerView rvFeed = findViewById(R.id.rvFeed);
         rvFeed.setLayoutManager(new LinearLayoutManager(this));
 
-        List<FeedItem> feedItems = new ArrayList<>();
-        feedItems.add(new FeedItem("Ravi Gupta", "Rewari, Haryana", "PENDING", "3B Kapriwas, Haryana... Waste accumulation near park area.", R.drawable.profile_image, R.drawable.login_signup_hero_img));
-        feedItems.add(new FeedItem("Preeya", "Gurugram, Sector 44", "RESOLVED", "Cleanliness drive conducted near Metro station.", R.drawable.profile_image, R.drawable.login_signup_hero_img));
-        feedItems.add(new FeedItem("Namandeep", "Alwar Bypass", "IN PROGRESS", "Garbage collection scheduled for today evening.", R.drawable.profile_image, R.drawable.login_signup_hero_img));
-
-        FeedAdapter adapter = new FeedAdapter(feedItems);
+        adapter = new FeedAdapter(feedItems);
         rvFeed.setAdapter(adapter);
+
+        fetchFilteredFeedReports();
+    }
+
+    private void fetchFilteredFeedReports() {
+        String currentUid = authManager.getCurrentUserUid();
+        if (currentUid == null || currentUid.trim().isEmpty()) {
+            return;
+        }
+
+        firestore.collection("reports")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(150)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    feedItems.clear();
+
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        String ownerId = valueOrFallback(doc.getString("userId"), "");
+                        String status = valueOrFallback(doc.getString("status"), "PENDING");
+
+                        // Show only reports created by others and not resolved
+                        if (ownerId.equals(currentUid) || isResolved(status)) {
+                            continue;
+                        }
+
+                        String city = valueOrFallback(doc.getString("city"), "Reported Location");
+                        String address = valueOrFallback(doc.getString("address"), "No address");
+                        String description = valueOrFallback(doc.getString("description"), "No description available");
+                        String imageUrl = extractFirstImage(doc);
+                        long upvoteCount = doc.contains("likes")
+                            ? toLong(doc.get("likes"))
+                            : toLong(doc.get("upvoteCount"));
+                        long commentCount = toLong(doc.get("commentCount"));
+
+                        ensureEngagementFields(doc, upvoteCount, commentCount);
+
+                        feedItems.add(new FeedItem(
+                                doc.getId(),
+                                ownerId,
+                                "Community Member",
+                                city,
+                                status,
+                                description,
+                                address,
+                                imageUrl,
+                                "",
+                                upvoteCount,
+                                commentCount,
+                                false,
+                                R.drawable.profile_image,
+                                R.drawable.login_signup_hero_img
+                        ));
+                    }
+
+                    adapter.notifyDataSetChanged();
+                    hydrateUserUpvoteState(currentUid);
+                    hydrateUploaderInfo();
+
+                    if (feedItems.isEmpty()) {
+                        Toast.makeText(this, "No active reports from other users", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load feed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void hydrateUserUpvoteState(String currentUid) {
+        for (int i = 0; i < feedItems.size(); i++) {
+            int index = i;
+            FeedItem item = feedItems.get(i);
+            String reportId = item.getReportId();
+            if (reportId == null || reportId.trim().isEmpty()) {
+                continue;
+            }
+
+            String upvoteDocId = reportId + "_" + currentUid;
+            firestore.collection("likes")
+                    .document(upvoteDocId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        item.setUpvotedByCurrentUser(snapshot.exists());
+                        if (index < feedItems.size()) {
+                            adapter.notifyItemChanged(index);
+                        }
+                    })
+                    .addOnFailureListener(e -> firestore.collection("reports")
+                            .document(reportId)
+                            .collection("likes")
+                            .document(currentUid)
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                item.setUpvotedByCurrentUser(snapshot.exists());
+                                if (index < feedItems.size()) {
+                                    adapter.notifyItemChanged(index);
+                                }
+                            }));
+        }
+    }
+
+    private void hydrateUploaderInfo() {
+        for (int i = 0; i < feedItems.size(); i++) {
+            int index = i;
+            FeedItem item = feedItems.get(i);
+            String ownerId = item.getReportOwnerId();
+            if (ownerId == null || ownerId.trim().isEmpty()) {
+                continue;
+            }
+
+            firestore.collection("users")
+                    .document(ownerId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.exists()) {
+                            return;
+                        }
+
+                        String firstName = valueOrFallback(snapshot.getString("firstName"), "");
+                        String lastName = valueOrFallback(snapshot.getString("lastName"), "");
+                        String fullName = (firstName + " " + lastName).trim();
+                        if (fullName.isEmpty()) {
+                            fullName = "Community Member";
+                        }
+
+                        String profileImageUrl = valueOrFallback(snapshot.getString("profileImageUrl"), "");
+                        item.setUserName(fullName);
+                        item.setUploaderProfileUrl(profileImageUrl);
+
+                        if (index < feedItems.size()) {
+                            adapter.notifyItemChanged(index);
+                        }
+                    });
+        }
+    }
+
+    private void ensureEngagementFields(QueryDocumentSnapshot doc, long upvoteCount, long commentCount) {
+        Map<String, Object> defaults = new HashMap<>();
+        if (!doc.contains("likes")) {
+            defaults.put("likes", upvoteCount);
+        }
+        if (!doc.contains("upvoteCount")) {
+            defaults.put("upvoteCount", upvoteCount);
+        }
+        if (!doc.contains("commentCount")) {
+            defaults.put("commentCount", commentCount);
+        }
+
+        if (!defaults.isEmpty()) {
+            firestore.collection("reports")
+                    .document(doc.getId())
+                    .set(defaults, SetOptions.merge());
+        }
+    }
+
+    private String extractFirstImage(QueryDocumentSnapshot doc) {
+        Object imageUrisObj = doc.get("imageUris");
+        if (imageUrisObj instanceof List) {
+            List<?> images = (List<?>) imageUrisObj;
+            if (!images.isEmpty() && images.get(0) != null) {
+                return String.valueOf(images.get(0));
+            }
+        }
+
+        String imageUrl = doc.getString("imageUrl");
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            return imageUrl;
+        }
+
+        Object imagesObj = doc.get("images");
+        if (imagesObj instanceof List) {
+            List<?> images = (List<?>) imagesObj;
+            if (!images.isEmpty() && images.get(0) instanceof Map) {
+                Object url = ((Map<?, ?>) images.get(0)).get("url");
+                if (url != null) {
+                    return String.valueOf(url);
+                }
+            }
+        }
+
+        return "";
+    }
+
+    private String valueOrFallback(String value, String fallback) {
+        return (value != null && !value.trim().isEmpty()) ? value : fallback;
+    }
+
+    private boolean isResolved(String status) {
+        return "RESOLVED".equalsIgnoreCase(status);
+    }
+
+    private long toLong(Object value) {
+        if (value == null) return 0L;
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        try {
+            return Long.parseLong(String.valueOf(value));
+        } catch (Exception ignored) {
+            return 0L;
+        }
     }
 }
