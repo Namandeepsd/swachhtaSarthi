@@ -28,6 +28,7 @@
                 android:layout_marginBottom="24dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivProfileImage"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:scaleType="centerCrop"
@@ -43,6 +44,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvProfileName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Namandeep Singh"
@@ -51,6 +53,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvProfileRole"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Volunteer"
@@ -81,6 +84,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvAccountProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawablePadding="16dp"
@@ -93,6 +97,7 @@
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
+                        android:id="@+id/tvAccountNotifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -105,6 +110,7 @@
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
+                        android:id="@+id/tvAccountScoreMetrics"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -150,6 +156,7 @@
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
                     <TextView
+                        android:id="@+id/tvMoreKnowMore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
