@@ -83,12 +83,12 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="16dp"
                         android:padding="16dp"
                         android:text="Profile"
                         android:textColor="#1E293B"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_myplaces"
-                        android:drawablePadding="16dp" />
+                        app:drawableStartCompat="@android:drawable/ic_menu_myplaces" />
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 

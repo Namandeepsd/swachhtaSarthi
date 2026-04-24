@@ -6,15 +6,15 @@ public class MyReports {
     private String location;
     private String time;
     private String status;
-    private int imageResId; // Using resource ID for demo, eventually this will be a URL
+    private String imageUrl;
 
-    public MyReports(String title, String description, String location, String time, String status, int imageResId) {
+    public MyReports(String title, String description, String location, String time, String status, String imageUrl) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.time = time;
         this.status = status;
-        this.imageResId = imageResId;
+        this.imageUrl = imageUrl;
     }
 
     public String getTitle() { return title; }
@@ -22,5 +22,5 @@ public class MyReports {
     public String getLocation() { return location; }
     public String getTime() { return time; }
     public String getStatus() { return status; }
-    public int getImageResId() { return imageResId; }
+    public String getImageUrl() { return imageUrl; }
 }
