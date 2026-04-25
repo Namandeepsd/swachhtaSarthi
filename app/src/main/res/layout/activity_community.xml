@@ -281,9 +281,9 @@
 
                     <ImageView
                         android:id="@+id/ivContributionIcon"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/report_icon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/my_contri"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -363,7 +363,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/post" />
+                    app:srcCompat="@drawable/new_post" />
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

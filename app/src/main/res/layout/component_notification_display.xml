@@ -16,15 +16,14 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivNotificationIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:padding="8dp"
-            android:background="#F1F5F9"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            app:srcCompat="@drawable/notification" />
+            app:srcCompat="@drawable/notification_icon" />
 
         <TextView
             android:id="@+id/tvNotificationMessage"
