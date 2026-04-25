@@ -27,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/RoundedCorner8"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@drawable/littered_place" />
 
         <!-- Title -->
         <TextView
