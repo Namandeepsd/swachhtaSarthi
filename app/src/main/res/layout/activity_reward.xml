@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <include
+            layout="@layout/component_navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <ImageButton
+            android:id="@+id/imageButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            app:srcCompat="@drawable/ellipse"
+            tools:layout_editor_absoluteX="100dp"
+            tools:layout_editor_absoluteY="86dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Points"
+            android:textColor="#135BEC"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="153dp"
+            tools:layout_editor_absoluteY="137dp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="98dp"
+            android:layout_height="73dp"
+            android:text="436"
+            android:textColor="#135BEC"
+            android:textSize="55sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="156dp"
+            tools:layout_editor_absoluteY="155dp" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 872"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="171dp"
+            tools:layout_editor_absoluteY="228dp" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You earned these points from verified cleanups"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="55dp"
+            tools:layout_editor_absoluteY="286dp" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="156dp"
+            android:layout_height="41dp"
+            android:background="@drawable/box_bg"
+            android:text="Share Impact"
+            android:textSize="15sp"
+            tools:layout_editor_absoluteX="27dp"
+            tools:layout_editor_absoluteY="330dp" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="156dp"
+            android:layout_height="41dp"
+            android:background="@drawable/box_bg"
+            android:text="Donate"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="214dp"
+            tools:layout_editor_absoluteY="330dp" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/share"
+            tools:layout_editor_absoluteX="153dp"
+            tools:layout_editor_absoluteY="342dp" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Redeem Rewards"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="393dp" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Points Activity"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="533dp" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+200pts part cleanup"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="567dp" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/line2"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="594dp" />
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+100pts Market Area,Kapriwas"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="603dp" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/line2"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="630dp" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+50pts Garbage clean,Rewari"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="640dp" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/line2"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="667dp" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+50pts Garbage clean,Rewari"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="676dp" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/line2"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="704dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

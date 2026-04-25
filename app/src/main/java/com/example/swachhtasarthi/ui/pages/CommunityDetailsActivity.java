@@ -221,7 +221,6 @@ public class CommunityDetailsActivity extends AppCompatActivity {
     private void uploadToImageKit(Uri uri, String filename, ImageKitUploadCallback callback) {
         // Fallback mode: allow app flow to work even if backend token endpoint is not configured.
         // In this mode we save local content Uri instead of uploading to ImageKit.
-        Object BuildConfig;
         if (BuildConfig.IMAGEKIT_AUTH_ENDPOINT == null || BuildConfig.IMAGEKIT_AUTH_ENDPOINT.trim().isEmpty()) {
             callback.onSuccess(uri.toString());
             return;
