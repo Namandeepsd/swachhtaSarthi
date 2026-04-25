@@ -13,6 +13,8 @@
         android:weightSum="4">
 
         <!-- Home -->
+
+        <!-- Report -->
         <LinearLayout
             android:id="@+id/nav_home"
             android:layout_width="0dp"
@@ -26,9 +28,9 @@
 
             <ImageView
                 android:id="@+id/imageButtonHome"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/home_icon" />
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                app:srcCompat="@drawable/home_new" />
 
             <TextView
                 android:id="@+id/textViewHome"
@@ -41,7 +43,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Report -->
         <LinearLayout
             android:id="@+id/nav_report"
             android:layout_width="0dp"
@@ -55,9 +56,9 @@
 
             <ImageView
                 android:id="@+id/imageButtonReport"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/report_icon" />
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                app:srcCompat="@drawable/feed_new" />
 
             <TextView
                 android:id="@+id/textViewReport"
@@ -84,9 +85,9 @@
 
             <ImageView
                 android:id="@+id/imageButtonCommunity"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/community_icon" />
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:srcCompat="@drawable/community_new" />
 
             <TextView
                 android:id="@+id/textViewCommunity"
@@ -113,9 +114,9 @@
 
             <ImageView
                 android:id="@+id/imageButtonProfile"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/profile_icon" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/profile_new" />
 
             <TextView
                 android:id="@+id/textViewProfile"

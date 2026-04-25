@@ -80,7 +80,7 @@
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@drawable/google_login"
+            app:srcCompat="@drawable/Sign_up"
             app:layout_constraintTop_toBottomOf="@id/tvTagline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

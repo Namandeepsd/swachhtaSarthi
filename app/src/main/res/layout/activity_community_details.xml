@@ -148,7 +148,8 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Create &amp; Save"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="20dp"
+            app:rippleColor="#0000" />
 
         <ProgressBar
             android:id="@+id/progressBar"
