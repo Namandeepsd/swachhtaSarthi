@@ -160,7 +160,7 @@
                         android:clickable="true"
                         android:contentDescription="Upvote"
                         android:focusable="true"
-                        android:src="@android:drawable/arrow_up_float"
+                        android:src="@drawable/up_arrow"
                         app:tint="#64748B" />
 
                     <TextView

@@ -87,7 +87,7 @@
                 android:id="@+id/imageButtonCommunity"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                app:srcCompat="@drawable/community_new" />
+                app:srcCompat="@drawable/new_community_grey" />
 
             <TextView
                 android:id="@+id/textViewCommunity"
