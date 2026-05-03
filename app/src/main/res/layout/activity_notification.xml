@@ -35,13 +35,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/notification"
-            app:tint="#1E293B" />
     </RelativeLayout>
 
     <!-- Notifications List -->

@@ -74,6 +74,10 @@ public class SettingsActivity extends AppCompatActivity {
                 if (firstName != null && lastName != null) {
                     tvProfileName.setText(firstName + " " + lastName);
                 }
+                String profileImageUrl = documentSnapshot.getString("profileImageUrl");
+                if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                    com.bumptech.glide.Glide.with(this).load(profileImageUrl).placeholder(R.drawable.profile_image).into(ivProfileImage);
+                }
                 // Role could be dynamic, but for now it's "Volunteer" in XML
             }
         });

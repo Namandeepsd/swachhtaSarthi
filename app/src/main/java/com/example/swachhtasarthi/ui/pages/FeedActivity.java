@@ -100,6 +100,8 @@ public class FeedActivity extends AppCompatActivity {
 
         TextView tvUserName = findViewById(R.id.tvUserName);
         TextView tvUserLocation = findViewById(R.id.tvUserLocation);
+        com.google.android.material.imageview.ShapeableImageView ivUserProfile = findViewById(R.id.ivUserProfile);
+
         if (tvUserName != null) tvUserName.setText("User");
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -114,6 +116,7 @@ public class FeedActivity extends AppCompatActivity {
                     String firstName = documentSnapshot.getString("firstName");
                     String lastName = documentSnapshot.getString("lastName");
                     String city = documentSnapshot.getString("city");
+                    String profileImageUrl = documentSnapshot.getString("profileImageUrl");
 
                     String fullName = "";
                     if (firstName != null && !firstName.trim().isEmpty()) {
@@ -127,6 +130,12 @@ public class FeedActivity extends AppCompatActivity {
                     }
                     if (city != null && !city.trim().isEmpty() && tvUserLocation != null) {
                         tvUserLocation.setText(city.trim());
+                    }
+                    if (profileImageUrl != null && !profileImageUrl.isEmpty() && ivUserProfile != null) {
+                        com.bumptech.glide.Glide.with(this)
+                            .load(profileImageUrl)
+                            .placeholder(R.drawable.logoswachhtasarthi)
+                            .into(ivUserProfile);
                     }
                 });
     }
@@ -269,8 +278,9 @@ public class FeedActivity extends AppCompatActivity {
                         item.setUserName(fullName);
                         item.setUploaderProfileUrl(profileImageUrl);
 
-                        if (index < feedItems.size()) {
-                            adapter.notifyItemChanged(index);
+                        int currentIndex = feedItems.indexOf(item);
+                        if (currentIndex != -1) {
+                            adapter.notifyItemChanged(currentIndex);
                         }
                     });
         }

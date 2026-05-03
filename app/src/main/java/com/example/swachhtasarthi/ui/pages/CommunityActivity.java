@@ -57,6 +57,7 @@ public class CommunityActivity extends AppCompatActivity {
     private View scrollView;
     private View notificationBadge;
     private View layoutFollowers, layoutMembers;
+    private ProgressBar progressBarCommunity;
 
     private TextView tvFollowersCount, tvMembersCount, tvComplaintsCount;
 
@@ -129,6 +130,7 @@ public class CommunityActivity extends AppCompatActivity {
         notificationBadge = findViewById(R.id.notificationBadge);
         layoutFollowers = findViewById(R.id.layoutFollowers);
         layoutMembers = findViewById(R.id.layoutMembers);
+        progressBarCommunity = findViewById(R.id.progressBarCommunity);
 
         tvFollowersCount = findViewById(R.id.tvFollowersCount);
         tvMembersCount = findViewById(R.id.tvMembersCount);
@@ -350,6 +352,8 @@ public class CommunityActivity extends AppCompatActivity {
     private void setupForMode(boolean exists) {
         String currentUid = firebaseManagerAndAuth.getCurrentUserUid();
         boolean isOwn = currentUid != null && currentUid.equals(communityIdToShow);
+
+        if (progressBarCommunity != null) progressBarCommunity.setVisibility(View.GONE);
 
         if (!exists) {
             redirectToNoCommunity();
