@@ -18,6 +18,7 @@ playServicesMaps = "20.0.0"
 playServicesLocation = "21.1.0"
 recyclerview = "1.4.0"
 firebaseDatabase = "22.0.1"
+firebaseMessaging = "24.1.0"
 
 [libraries]
 firebase-auth-v2230 = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
@@ -37,6 +38,7 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

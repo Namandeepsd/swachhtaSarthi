@@ -8,6 +8,12 @@ public class FeedItem {
     private String status;
     private String description;
     private String address;
+    private String latitude;
+    private String longitude;
+    private String pinCode;
+    private String dateOfIssue;
+    private String timeOfIssue;
+    private long createdAt;
     private String imageUrl;
     private String uploaderProfileUrl;
     private long upvoteCount;
@@ -25,6 +31,12 @@ public class FeedItem {
             String status,
             String description,
             String address,
+            String latitude,
+            String longitude,
+            String pinCode,
+            String dateOfIssue,
+            String timeOfIssue,
+            long createdAt,
             String imageUrl,
             String uploaderProfileUrl,
             long upvoteCount,
@@ -40,6 +52,12 @@ public class FeedItem {
         this.status = status;
         this.description = description;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pinCode = pinCode;
+        this.dateOfIssue = dateOfIssue;
+        this.timeOfIssue = timeOfIssue;
+        this.createdAt = createdAt;
         this.imageUrl = imageUrl;
         this.uploaderProfileUrl = uploaderProfileUrl;
         this.upvoteCount = upvoteCount;
@@ -57,6 +75,12 @@ public class FeedItem {
     public String getStatus() { return status; }
     public String getDescription() { return description; }
     public String getAddress() { return address; }
+    public String getLatitude() { return latitude; }
+    public String getLongitude() { return longitude; }
+    public String getPinCode() { return pinCode; }
+    public String getDateOfIssue() { return dateOfIssue; }
+    public String getTimeOfIssue() { return timeOfIssue; }
+    public long getCreatedAt() { return createdAt; }
     public String getImageUrl() { return imageUrl; }
     public String getUploaderProfileUrl() { return uploaderProfileUrl; }
     public long getUpvoteCount() { return upvoteCount; }

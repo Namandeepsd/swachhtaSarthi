@@ -1,368 +1,274 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F8FAFC">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_tray_container"
+    <LinearLayout
+        android:id="@+id/headerReward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/include_navbar"
-            layout="@layout/component_navbar"
+        <ImageView
+            android:id="@+id/btnBackReward"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="Activity Rewards"
+            android:textColor="#0F172A"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnScoreInfo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Score info"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_help" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_tray_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerReward">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:fillViewport="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/include_navbar">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="24dp">
-
-                <ImageButton
-                    android:id="@+id/imageButton5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:background="@android:color/transparent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ellipse" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Your Points"
-                    android:textColor="#135BEC"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageButton5"
-                    app:layout_constraintEnd_toEndOf="@+id/imageButton5"
-                    app:layout_constraintStart_toStartOf="@+id/imageButton5"
-                    app:layout_constraintTop_toTopOf="@+id/imageButton5"
-                    app:layout_constraintVertical_bias="0.3" />
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="436"
-                    android:textColor="#135BEC"
-                    android:textSize="48sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/imageButton5"
-                    app:layout_constraintStart_toStartOf="@+id/imageButton5"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Score: 872"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/imageButton5"
-                    app:layout_constraintStart_toStartOf="@+id/imageButton5"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="You earned these points from verified cleanups"
-                    android:textColor="#666666"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imageButton5" />
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#DBEAFE"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
-                    android:id="@+id/layoutButtons"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/textView6">
+                    android:background="#EFF6FF"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:shadowColor="#000000"
-                        android:shadowDx="10"
-                        android:shadowDy="10"
-                        android:text="Share Impact"
-                        android:textAllCaps="false"
-                        android:textColor="#000000"
-                        app:backgroundTint="#FFFFFF"
-                        app:cornerRadius="8dp"
-                        app:icon="@drawable/share_high_res"
-                        app:iconGravity="end"
-                        app:iconTint="#000000"
-                        app:strokeColor="#E0E0E0"
-                        app:strokeWidth="1dp" />
+                        android:text="Civic Trust Score"
+                        android:textColor="#1E3A8A"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnDonate"
-                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/tvScoreValue"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:shadowColor="#000000"
-                        android:shadowDx="10"
-                        android:shadowDy="10"
-                        android:text="Donate"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        app:backgroundTint="#D32F2F"
-                        app:cornerRadius="8dp"
-                        app:icon="@drawable/heart"
-                        app:iconGravity="end"
-                        app:iconTint="#FFFFFF" />
+                        android:layout_marginTop="6dp"
+                        android:text="000"
+                        android:textColor="#0F172A"
+                        android:textSize="40sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvScoreBand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Starter"
+                        android:textColor="#1D4ED8"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/scoreProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="12dp"
+                        app:trackColor="#BFDBFE" />
+
+                    <TextView
+                        android:id="@+id/tvNextMilestone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Next milestone appears here"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="32dp"
-                    android:text="Redeem Awards"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layoutButtons" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
 
-                <HorizontalScrollView
-                    android:id="@+id/redeemScrollView"
-                    android:layout_width="match_parent"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:clipToPadding="false"
-                    android:paddingHorizontal="16dp"
-                    android:scrollbars="none"
-                    app:layout_constraintTop_toBottomOf="@id/textView7">
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="14dp">
 
-                        <!-- Award Card 1 -->
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="140dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="2dp">
+                            android:text="Total Points"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="vertical"
-                                android:padding="12dp">
-
-                                <ImageView
-                                    android:layout_width="80dp"
-                                    android:layout_height="60dp"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/logoswachhtasarthi" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
-                                    android:gravity="center"
-                                    android:text="Amazon gift card\nworth 199/-"
-                                    android:textColor="#333333"
-                                    android:textSize="12sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="12dp"
-                                    android:text="Redeem"
-                                    android:textColor="#135BEC"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <!-- Award Card 2 -->
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="140dp"
+                        <TextView
+                            android:id="@+id/tvPointsValue"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="2dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="vertical"
-                                android:padding="12dp">
-
-                                <ImageView
-                                    android:layout_width="80dp"
-                                    android:layout_height="60dp"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/logoswachhtasarthi" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
-                                    android:gravity="center"
-                                    android:text="Amazon gift card\nworth 99/-"
-                                    android:textColor="#333333"
-                                    android:textSize="12sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="12dp"
-                                    android:text="Redeem"
-                                    android:textColor="#135BEC"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <!-- Award Card 3 -->
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="140dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="2dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="vertical"
-                                android:padding="12dp">
-
-                                <ImageView
-                                    android:layout_width="80dp"
-                                    android:layout_height="60dp"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/logoswachhtasarthi" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
-                                    android:gravity="center"
-                                    android:text="Amazon gift card\nworth 249/-"
-                                    android:textColor="#333333"
-                                    android:textSize="12sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="12dp"
-                                    android:text="Redeem"
-                                    android:textColor="#135BEC"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-
+                            android:layout_marginTop="4dp"
+                            android:text="0"
+                            android:textColor="#0F172A"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
-                </HorizontalScrollView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardCommunityPoints"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="32dp"
-                    android:text="Points Activity"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/redeemScrollView" />
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="20dp"
-                    app:layout_constraintTop_toBottomOf="@id/textView8">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+200pts part cleanup"
-                        android:textColor="#333333"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <View
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="+100pts Market Area, Kapriwas"
-                        android:textColor="#333333"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:orientation="vertical"
+                        android:padding="14dp">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="#E0E0E0" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Community Points"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+50pts Garbage clean, Rewari"
-                        android:textColor="#333333"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/tvCommunityPointsValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="0"
+                            android:textColor="#0F172A"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShareImpact"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Share Impact"
+                android:textAllCaps="false"
+                app:cornerRadius="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Rewards You Can Unlock"
+                android:textColor="#0F172A"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRewardOffers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:paddingBottom="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRedeemHelp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="How Redemption Works"
+                android:textAllCaps="false"
+                app:cornerRadius="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Activity Breakdown"
+                android:textColor="#0F172A"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvActivityBreakdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <ProgressBar
+                android:id="@+id/progressRewards"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/bottom_tray_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <include layout="@layout/component_tray_bottom" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

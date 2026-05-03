@@ -3,28 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="#F1F5F9"
-    app:strokeWidth="1dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="1dp"
+    app:strokeColor="#00000000"
+    app:strokeWidth="0dp"
+    android:backgroundTint="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- User Info Header -->
+        <!-- Header (Instagram-like) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="10dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivUserProfile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,41 +36,42 @@
                 app:shapeAppearanceOverlay="@style/CircleImageView"
                 app:srcCompat="@drawable/profile_image" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvUserName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@id/ivUserProfile"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Community Member"
+                android:textColor="#0F172A"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/tvStatusTag"
                 app:layout_constraintStart_toEndOf="@id/ivUserProfile"
-                app:layout_constraintTop_toTopOf="@id/ivUserProfile">
+                app:layout_constraintTop_toTopOf="@id/ivUserProfile" />
 
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="User Name"
-                    android:textColor="#1E293B"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Location"
-                    android:textColor="#64748B"
-                    android:textSize="12sp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Location"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/tvStatusTag"
+                app:layout_constraintStart_toEndOf="@id/ivUserProfile"
+                app:layout_constraintTop_toBottomOf="@id/tvUserName" />
 
             <TextView
                 android:id="@+id/tvStatusTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_pending_tag"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
                 android:text="PENDING"
                 android:textColor="#E67E22"
                 android:textSize="11sp"
@@ -76,156 +81,153 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Post Image -->
-        <ImageView
+        <!-- Media -->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPostImage"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="320dp"
             android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.None"
             app:srcCompat="@drawable/login_signup_hero_img" />
 
-        <!-- Description & Actions -->
+        <!-- Actions + counts + caption (minimal) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp">
 
+            <!-- Action icons row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/ivUpvote"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Like"
+                    android:src="@drawable/up_arrow"
+                    app:tint="#64748B" />
+
+                <ImageView
+                    android:id="@+id/ivComment"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Comment"
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:tint="#64748B" />
+
+                <ImageView
+                    android:id="@+id/ivShare"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Share"
+                    android:src="@android:drawable/ic_menu_share"
+                    app:tint="#64748B" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:id="@+id/ivContribute"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Volunteer"
+                    android:src="@android:drawable/ic_input_add"
+                    app:tint="#135BEC" />
+            </LinearLayout>
+
+            <!-- Minimal counts line -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUpvoteCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#0F172A"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="likes"
+                    android:textColor="#0F172A"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCommentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textColor="#0F172A"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="comments"
+                    android:textColor="#0F172A"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Minimal caption -->
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:text="Post description goes here..."
-                android:textColor="#1E293B"
-                android:textSize="14sp" />
+                android:textColor="#0F172A"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvReadMore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:text="Read more"
-                android:textColor="#135BEC"
+                android:textColor="#64748B"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/ivContribute"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:clickable="true"
-                        android:contentDescription="Contribute"
-                        android:focusable="true"
-                        android:src="@android:drawable/ic_input_add"
-                        app:tint="#135BEC" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Contribute"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/ivUpvote"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:clickable="true"
-                        android:contentDescription="Upvote"
-                        android:focusable="true"
-                        android:src="@drawable/up_arrow"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:id="@+id/tvUpvoteCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="0"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/ivComment"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:clickable="true"
-                        android:contentDescription="Comment"
-                        android:focusable="true"
-                        android:src="@android:drawable/ic_menu_edit"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:id="@+id/tvCommentCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="0"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/ivShare"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:clickable="true"
-                        android:contentDescription="Share"
-                        android:focusable="true"
-                        android:src="@android:drawable/ic_menu_share"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Share"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

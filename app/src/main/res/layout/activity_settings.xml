@@ -92,20 +92,8 @@
                         android:text="Profile"
                         android:textColor="#1E293B"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_myplaces" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
-
-                    <TextView
-                        android:id="@+id/tvAccountNotifications"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="Notifications"
-                        android:textColor="#1E293B"
-                        android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_popup_reminder"
-                        android:drawablePadding="16dp" />
+                        app:drawableStartCompat="@drawable/ic_profile_outline"
+                        app:drawableTint="#64748B" />
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
@@ -114,10 +102,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        android:text="Score Metrics"
+                        android:text="Rewards"
                         android:textColor="#1E293B"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_sort_by_size"
+                        app:drawableStartCompat="@drawable/ic_rewards_outline"
+                        app:drawableTint="#64748B"
                         android:drawablePadding="16dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -143,6 +132,20 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvDonate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Donate"
+                        android:textColor="#1E293B"
+                        android:textSize="16sp"
+                        app:drawableStartCompat="@drawable/ic_heart_outline"
+                        app:drawableTint="#64748B"
+                        android:drawablePadding="16dp" />
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+
+                    <TextView
                         android:id="@+id/tvReportProblem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -150,7 +153,8 @@
                         android:text="Report a Problem"
                         android:textColor="#1E293B"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_report_image"
+                        app:drawableStartCompat="@drawable/ic_report_problem_outline"
+                        app:drawableTint="#64748B"
                         android:drawablePadding="16dp" />
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
@@ -163,7 +167,8 @@
                         android:text="Know More"
                         android:textColor="#1E293B"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_menu_info_details"
+                        app:drawableStartCompat="@drawable/ic_info_outline"
+                        app:drawableTint="#64748B"
                         android:drawablePadding="16dp" />
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
@@ -176,7 +181,8 @@
                         android:text="Logout"
                         android:textColor="#D32F2F"
                         android:textSize="16sp"
-                        app:drawableStartCompat="@android:drawable/ic_lock_power_off"
+                        app:drawableStartCompat="@drawable/ic_logout_outline"
+                        app:drawableTint="#D32F2F"
                         android:drawablePadding="16dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

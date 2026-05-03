@@ -2,6 +2,8 @@ package com.example.swachhtasarthi.ui.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +15,14 @@ import com.example.swachhtasarthi.model.FeedItem;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
 import com.example.swachhtasarthi.ui.auth.SignupActivity;
 import com.example.swachhtasarthi.ui.components.BottomTrayHandler;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private final List<FeedItem> feedItems = new ArrayList<>();
     private FeedAdapter adapter;
+    private View notificationBadge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,20 @@ public class FeedActivity extends AppCompatActivity {
         BottomTrayHandler bottomTrayHandler = new BottomTrayHandler(this);
         bottomTrayHandler.setup();
 
+        notificationBadge = findViewById(R.id.notificationBadge);
+        loadLoggedInUserInNavbar();
+        checkImpendingNotifications();
+
+        View search = findViewById(R.id.etGlobalSearch);
+        if (search != null) {
+            search.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
+        }
+
+        View ivNotification = findViewById(R.id.ivNotification);
+        if (ivNotification != null) {
+            ivNotification.setOnClickListener(v -> startActivity(new Intent(this, NotificationActivity.class)));
+        }
+
         RecyclerView rvFeed = findViewById(R.id.rvFeed);
         rvFeed.setLayoutManager(new LinearLayoutManager(this));
 
@@ -55,6 +74,63 @@ public class FeedActivity extends AppCompatActivity {
         fetchFilteredFeedReports();
     }
 
+    private void checkImpendingNotifications() {
+        String uid = authManager.getCurrentUserUid();
+        if (uid == null || notificationBadge == null) return;
+
+        firestore.collection("users")
+                .document(uid)
+                .collection("notifications")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(1)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) return;
+                    if (snapshots != null && !snapshots.isEmpty()) {
+                        notificationBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        notificationBadge.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void loadLoggedInUserInNavbar() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            return;
+        }
+
+        TextView tvUserName = findViewById(R.id.tvUserName);
+        TextView tvUserLocation = findViewById(R.id.tvUserLocation);
+        if (tvUserName != null) tvUserName.setText("User");
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firestore.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        return;
+                    }
+
+                    String firstName = documentSnapshot.getString("firstName");
+                    String lastName = documentSnapshot.getString("lastName");
+                    String city = documentSnapshot.getString("city");
+
+                    String fullName = "";
+                    if (firstName != null && !firstName.trim().isEmpty()) {
+                        fullName = firstName.trim();
+                    }
+                    if (lastName != null && !lastName.trim().isEmpty()) {
+                        fullName = fullName.isEmpty() ? lastName.trim() : fullName + " " + lastName.trim();
+                    }
+                    if (!fullName.isEmpty() && tvUserName != null) {
+                        tvUserName.setText(fullName);
+                    }
+                    if (city != null && !city.trim().isEmpty() && tvUserLocation != null) {
+                        tvUserLocation.setText(city.trim());
+                    }
+                });
+    }
+
     private void fetchFilteredFeedReports() {
         String currentUid = authManager.getCurrentUserUid();
         if (currentUid == null || currentUid.trim().isEmpty()) {
@@ -62,25 +138,33 @@ public class FeedActivity extends AppCompatActivity {
         }
 
         firestore.collection("reports")
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(150)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                .whereNotEqualTo("status", "RESOLVED")
+                .limit(500)
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        Toast.makeText(this, "Failed to load feed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (queryDocumentSnapshots == null) return;
+
                     feedItems.clear();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         String ownerId = valueOrFallback(doc.getString("userId"), "");
                         String status = valueOrFallback(doc.getString("status"), "PENDING");
-
-                        // Show only reports created by others and not resolved
-                        if (ownerId.equals(currentUid) || isResolved(status)) {
-                            continue;
-                        }
+                        String reportByType = valueOrFallback(doc.getString("reportByType"), "individual");
 
                         String city = valueOrFallback(doc.getString("city"), "Reported Location");
                         String address = valueOrFallback(doc.getString("address"), "No address");
                         String description = valueOrFallback(doc.getString("description"), "No description available");
                         String imageUrl = extractFirstImage(doc);
+                        String latitude = valueOrFallback(toStringDouble(doc.get("latitude")), "");
+                        String longitude = valueOrFallback(toStringDouble(doc.get("longitude")), "");
+                        String pinCode = valueOrFallback(doc.getString("pinCode"), "");
+                        String dateOfIssue = valueOrFallback(doc.getString("dateOfIssue"), "");
+                        String timeOfIssue = valueOrFallback(doc.getString("timeOfIssue"), "");
+                        long createdAt = toLong(doc.get("createdAt"));
                         long upvoteCount = doc.contains("likes")
                             ? toLong(doc.get("likes"))
                             : toLong(doc.get("upvoteCount"));
@@ -91,11 +175,17 @@ public class FeedActivity extends AppCompatActivity {
                         feedItems.add(new FeedItem(
                                 doc.getId(),
                                 ownerId,
-                                "Community Member",
+                                "community".equalsIgnoreCase(reportByType) ? "Community report" : "Individual report",
                                 city,
                                 status,
                                 description,
                                 address,
+                                latitude,
+                                longitude,
+                                pinCode,
+                                dateOfIssue,
+                                timeOfIssue,
+                                createdAt,
                                 imageUrl,
                                 "",
                                 upvoteCount,
@@ -106,15 +196,16 @@ public class FeedActivity extends AppCompatActivity {
                         ));
                     }
 
+                    Collections.sort(feedItems, (a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
+
                     adapter.notifyDataSetChanged();
                     hydrateUserUpvoteState(currentUid);
                     hydrateUploaderInfo();
 
                     if (feedItems.isEmpty()) {
-                        Toast.makeText(this, "No active reports from other users", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "No active reports found", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load feed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                });
     }
 
     private void hydrateUserUpvoteState(String currentUid) {
@@ -250,5 +341,25 @@ public class FeedActivity extends AppCompatActivity {
         } catch (Exception ignored) {
             return 0L;
         }
+    }
+
+    private String toStringDouble(Object value) {
+        if (value == null) return "";
+        if (value instanceof Number) {
+            return String.valueOf(((Number) value).doubleValue());
+        }
+        String s = String.valueOf(value).trim();
+        if (s.isEmpty()) return "";
+        try {
+            return String.valueOf(Double.parseDouble(s));
+        } catch (Exception ignored) {
+            return "";
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkImpendingNotifications();
     }
 }

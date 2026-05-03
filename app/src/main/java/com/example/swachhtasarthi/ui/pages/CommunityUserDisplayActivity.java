@@ -98,13 +98,33 @@ public class CommunityUserDisplayActivity extends AppCompatActivity {
         tvCommunityEmail.setText(email);
         tvCommunityDesc.setText(desc);
 
-        // Using Glide for reliable image loading from URLs
-        if (channelImg != null && !channelImg.isEmpty()) {
-            Glide.with(this).load(channelImg).placeholder(R.drawable.login_signup_hero_img).into(ivChannelBanner);
+        loadImageInto(ivChannelBanner, channelImg, R.drawable.login_signup_hero_img, false);
+        loadImageInto(ivCommunityProfile, profileImg, R.drawable.profile_image, true);
+    }
+
+    private void loadImageInto(ImageView target, String value, int placeholderRes, boolean circleCrop) {
+        if (target == null) return;
+        String v = value == null ? "" : value.trim();
+        if (v.isEmpty()) {
+            target.setImageResource(placeholderRes);
+            return;
         }
-        if (profileImg != null && !profileImg.isEmpty()) {
-            Glide.with(this).load(profileImg).placeholder(R.drawable.profile_image).circleCrop().into(ivCommunityProfile);
+
+        if (v.startsWith("content://")) {
+            try {
+                target.setImageURI(android.net.Uri.parse(v));
+            } catch (Exception ignored) {
+                target.setImageResource(placeholderRes);
+            }
+            return;
         }
+
+        com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable> req = Glide.with(this)
+                .load(v)
+                .placeholder(placeholderRes)
+                .error(placeholderRes);
+        if (circleCrop) req = req.circleCrop();
+        req.into(target);
     }
 
     @Override

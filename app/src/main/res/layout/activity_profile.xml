@@ -13,18 +13,25 @@
         android:padding="24dp">
 
         <ImageView
+            android:id="@+id/ivBack"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginBottom="24dp"
             android:src="@drawable/back_arrow"
-            />
+            android:clickable="true"
+            android:focusable="true" />
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
-            android:src="@drawable/profile_image" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_image"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,12 +55,13 @@
                     android:layout_marginBottom="4dp"/>
 
                 <EditText
+                    android:id="@+id/etFirstName"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/border_grey"
                     android:paddingHorizontal="12dp"
                     android:inputType="textPersonName"
-                    android:text="Namandeep" />
+                    android:hint="First Name" />
             </LinearLayout>
 
             <LinearLayout
@@ -71,12 +79,13 @@
                     android:layout_marginBottom="4dp"/>
 
                 <EditText
+                    android:id="@+id/etLastName"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/border_grey"
                     android:paddingHorizontal="12dp"
                     android:inputType="textPersonName"
-                    android:text="Singh" />
+                    android:hint="Last Name" />
             </LinearLayout>
         </LinearLayout>
 
@@ -88,13 +97,15 @@
             android:layout_marginBottom="4dp"/>
 
         <EditText
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/border_grey"
             android:paddingHorizontal="12dp"
             android:inputType="textEmailAddress"
             android:layout_marginBottom="16dp"
-            android:text="xyz.btech24cse@bmu.edu.in" />
+            android:enabled="false"
+            android:hint="Email" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,6 +121,7 @@
             android:layout_marginBottom="16dp">
 
             <EditText
+                android:id="@+id/etDobDay"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
@@ -117,9 +129,10 @@
                 android:gravity="center"
                 android:inputType="number"
                 android:maxLength="2"
-                android:text="13" />
+                android:hint="DD" />
 
             <EditText
+                android:id="@+id/etDobMonth"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
@@ -128,9 +141,10 @@
                 android:gravity="center"
                 android:inputType="number"
                 android:maxLength="2"
-                android:text="10" />
+                android:hint="MM" />
 
             <EditText
+                android:id="@+id/etDobYear"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1.5"
@@ -138,7 +152,7 @@
                 android:gravity="center"
                 android:inputType="number"
                 android:maxLength="4"
-                android:text="2005" />
+                android:hint="YYYY" />
         </LinearLayout>
 
         <TextView
@@ -149,6 +163,7 @@
             android:layout_marginBottom="4dp"/>
 
         <Spinner
+            android:id="@+id/spGender"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/border_grey"
@@ -162,29 +177,14 @@
             android:layout_marginBottom="4dp"/>
 
         <EditText
+            android:id="@+id/etMobile"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/border_grey"
             android:paddingHorizontal="12dp"
             android:inputType="phone"
-            android:layout_marginBottom="16dp"
-            android:text="+91 1234567890" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password"
-            android:textColor="#424242"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/border_grey"
-            android:paddingHorizontal="12dp"
-            android:inputType="textPassword"
             android:layout_marginBottom="32dp"
-            android:text="password123" />
+            android:hint="Mobile Number" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -192,6 +192,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
                 android:layout_width="0dp"
                 android:layout_height="45dp"
                 android:layout_marginEnd="8dp"
@@ -204,6 +205,7 @@
                 app:cornerRadius="20dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
                 android:layout_width="0dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="8dp"

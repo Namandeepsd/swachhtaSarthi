@@ -56,6 +56,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(libs.recyclerview)

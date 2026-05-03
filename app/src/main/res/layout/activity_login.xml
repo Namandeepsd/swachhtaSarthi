@@ -1,109 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:fillViewport="true">
+    android:background="#FFFFFF">
 
+    <!-- Hero Image -->
+    <ImageView
+        android:id="@+id/imageViewHero"
+        android:layout_width="0dp"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/login_signup_hero_img"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Content Card -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loginCard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_marginTop="-30dp"
+        android:background="@drawable/bg_top_rounded"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintTop_toBottomOf="@id/imageViewHero"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Hero Image -->
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="@null"
-            app:srcCompat="@drawable/login_signup_hero_img"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- White bottom sheet card -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/loginCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-40dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@id/imageView3"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="525dp"
-                android:paddingHorizontal="28dp"
-                android:paddingBottom="32dp">
+                android:layout_height="wrap_content">
 
-                <!-- Logo overlapping hero -->
+                <!-- Logo Overlapping -->
+                <ImageView
+                    android:id="@+id/ivLogo"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="-48dp"
+                    android:elevation="6dp"
+                    android:contentDescription="logo"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/logoswachhtasarthi" />
 
-                <!-- App Name -->
                 <TextView
                     android:id="@+id/tvAppName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Swachhta Sarthi"
-                    android:textColor="#000000"
-                    android:textSize="26sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textColor="#000000"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/ivLogo"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteY="50dp" />
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Tagline -->
                 <TextView
                     android:id="@+id/tvTagline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:text="Sabka Saath Sabka Vikaas"
+                    android:textSize="12sp"
                     android:textColor="#888888"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvAppName"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvAppName" />
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Google Button -->
-
-                <!-- OR -->
-
-                <!-- Email -->
-
-                <!-- Password -->
+                <!-- Fields -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEmail"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
                     android:hint="Email"
-                    app:boxCornerRadiusBottomEnd="10dp"
-                    app:boxCornerRadiusBottomStart="10dp"
-                    app:boxCornerRadiusTopEnd="10dp"
-                    app:boxCornerRadiusTopStart="10dp"
-                    app:boxStrokeColor="#CCCCCC"
-                    app:boxStrokeWidthFocused="1dp"
-                    app:hintTextColor="#888888"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_marginTop="24dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvTagline"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTagline">
-
+                    app:layout_constraintEnd_toEndOf="parent">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
                         android:inputType="textEmailAddress"
-                        android:textSize="14sp" />
+                        android:textSize="15sp"
+                        android:paddingVertical="14dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -111,74 +111,58 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:hint="Password"
-                    app:boxCornerRadiusBottomEnd="10dp"
-                    app:boxCornerRadiusBottomStart="10dp"
-                    app:boxCornerRadiusTopEnd="10dp"
-                    app:boxCornerRadiusTopStart="10dp"
-                    app:boxStrokeColor="#CCCCCC"
-                    app:boxStrokeWidthFocused="1dp"
+                    android:layout_marginTop="12dp"
                     app:endIconMode="password_toggle"
-                    app:hintTextColor="#888888"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/tilEmail"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tilEmail">
-
+                    app:layout_constraintEnd_toEndOf="parent">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
                         android:inputType="textPassword"
-                        android:textSize="14sp" />
+                        android:textSize="15sp"
+                        android:paddingVertical="14dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Login Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="54dp"
                     android:text="Login"
-                    android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="20dp"
                     app:backgroundTint="#1565C0"
-                    app:cornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tilPassword" />
-
-                <!-- Google Login Image (Moved here) -->
-                <ImageView
-                    android:id="@+id/imageView19"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:contentDescription="Google Login"
-                    app:srcCompat="@drawable/Sign_in"
-                    app:layout_constraintTop_toBottomOf="@id/btnLogin"
+                    app:cornerRadius="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/tilPassword"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Don't have an account -->
                 <TextView
                     android:id="@+id/tvSignup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:text="Don\'t have an account? Sign up"
+                    android:textSize="14sp"
                     android:textColor="#888888"
-                    android:textSize="13sp"
                     android:clickable="true"
                     android:focusable="true"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintTop_toBottomOf="@id/btnLogin"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imageView19" />
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
+        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

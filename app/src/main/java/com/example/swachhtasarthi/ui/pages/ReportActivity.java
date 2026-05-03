@@ -30,6 +30,8 @@ import com.example.swachhtasarthi.BuildConfig;
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
 import com.example.swachhtasarthi.ui.auth.SignupActivity;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
@@ -76,7 +78,8 @@ public class ReportActivity extends AppCompatActivity {
     private static final ExecutorService NETWORK_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private EditText etLatitude, etLongitude, etAddress, etCity, etPinCode, etDateOfIssue, etTimeOfIssue, etDescription;
-    private MaterialButton btnFetchGPS, btnAutoFillAddress, btnPost;
+    private MaterialButton btnFetchGPS, btnAutoFillAddress;
+    private MaterialButton btnPostCommunity, btnPostIndividual;
     private ImageView btnBack;
     
     private MaterialCardView btnUploadInitial, btnAddMore;
@@ -90,6 +93,7 @@ public class ReportActivity extends AppCompatActivity {
     
     private FirebaseManagerAndAuth firebaseManagerAndAuth = new FirebaseManagerAndAuth();
     private FusedLocationProviderClient fusedLocationClient;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private final ActivityResultLauncher<String> galleryPickerLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -136,7 +140,8 @@ public class ReportActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnFetchGPS = findViewById(R.id.btnFetchGPS);
         btnAutoFillAddress = findViewById(R.id.btnAutoFillAddress);
-        btnPost = findViewById(R.id.btnPostIssue);
+        btnPostCommunity = findViewById(R.id.btnPostCommunity);
+        btnPostIndividual = findViewById(R.id.btnPostIndividual);
 
         etLatitude = findViewById(R.id.etLatitude);
         etLongitude = findViewById(R.id.etLongitude);
@@ -206,10 +211,15 @@ public class ReportActivity extends AppCompatActivity {
         etDateOfIssue.setOnClickListener(v -> showDatePicker());
         etTimeOfIssue.setOnClickListener(v -> showTimePicker());
 
-        btnPost.setOnClickListener(v -> submitReport());
+        if (btnPostCommunity != null) {
+            btnPostCommunity.setOnClickListener(v -> submitReport(true));
+        }
+        if (btnPostIndividual != null) {
+            btnPostIndividual.setOnClickListener(v -> submitReport(false));
+        }
     }
 
-    private void submitReport() {
+    private void submitReport(boolean asCommunity) {
         String uid = firebaseManagerAndAuth.getCurrentUserUid();
         if (uid == null || uid.trim().isEmpty()) {
             Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
@@ -237,8 +247,11 @@ public class ReportActivity extends AppCompatActivity {
             }
         }
 
+        setPostingEnabled(false);
+
         Map<String, Object> reportData = new HashMap<>();
-        reportData.put("userId", uid);
+        reportData.put("postedBy", uid);
+        reportData.put("reportByType", asCommunity ? "community" : "individual");
         reportData.put("latitude", latitude);
         reportData.put("longitude", longitude);
         reportData.put("address", address);
@@ -253,9 +266,66 @@ public class ReportActivity extends AppCompatActivity {
         reportData.put("commentCount", 0);
         reportData.put("createdAt", System.currentTimeMillis());
 
-        btnPost.setEnabled(false);
+        if (!asCommunity) {
+            reportData.put("userId", uid);
+            uploadImagesAndSubmitReport(uid, imageUris, reportData);
+            return;
+        }
 
-        uploadImagesAndSubmitReport(uid, imageUris, reportData);
+        resolveUsersCommunityId(uid, communityId -> {
+            if (communityId == null || communityId.trim().isEmpty()) {
+                // If user isn't a member/owner of a community, fall back to individual.
+                reportData.put("reportByType", "individual");
+                reportData.put("userId", uid);
+                uploadImagesAndSubmitReport(uid, imageUris, reportData);
+                return;
+            }
+
+            reportData.put("communityId", communityId);
+            // For community reports, store under community owner id for easy aggregation.
+            reportData.put("userId", communityId);
+            uploadImagesAndSubmitReport(uid, imageUris, reportData);
+        });
+    }
+
+    private void setPostingEnabled(boolean enabled) {
+        if (btnPostCommunity != null) btnPostCommunity.setEnabled(enabled);
+        if (btnPostIndividual != null) btnPostIndividual.setEnabled(enabled);
+    }
+
+    private interface OnCommunityResolved {
+        void onResolved(String communityId);
+    }
+
+    private void resolveUsersCommunityId(String uid, OnCommunityResolved cb) {
+        // Own community doc takes precedence
+        db.collection("community")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        cb.onResolved(uid);
+                        return;
+                    }
+
+                    db.collectionGroup("members")
+                            .whereEqualTo(FieldPath.documentId(), uid)
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener(snaps -> {
+                                if (!snaps.isEmpty()) {
+                                    String communityId = snaps.getDocuments().get(0).getReference()
+                                            .getParent()
+                                            .getParent()
+                                            .getId();
+                                    cb.onResolved(communityId);
+                                } else {
+                                    cb.onResolved("");
+                                }
+                            })
+                            .addOnFailureListener(e -> cb.onResolved(""));
+                })
+                .addOnFailureListener(e -> cb.onResolved(""));
     }
 
     private void uploadImagesAndSubmitReport(String uid, List<String> localImageUris, Map<String, Object> reportData) {
@@ -309,7 +379,7 @@ public class ReportActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                btnPost.setEnabled(true);
+                setPostingEnabled(true);
                 Toast.makeText(ReportActivity.this, "Image upload failed: " + error, Toast.LENGTH_SHORT).show();
             }
         });
@@ -475,7 +545,7 @@ public class ReportActivity extends AppCompatActivity {
 
     private void submitPreparedReport(Map<String, Object> reportData) {
         firebaseManagerAndAuth.submitReport(reportData, task -> {
-            btnPost.setEnabled(true);
+            setPostingEnabled(true);
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Issue Reported Successfully!", Toast.LENGTH_SHORT).show();
                 finish();

@@ -14,6 +14,7 @@ import com.example.swachhtasarthi.ui.pages.FeedActivity;
 import com.example.swachhtasarthi.ui.pages.HomeActivity;
 import com.example.swachhtasarthi.ui.pages.ProfileActivity;
 import com.example.swachhtasarthi.ui.pages.ReportActivity;
+import com.example.swachhtasarthi.ui.pages.SettingsActivity;
 
 public class BottomTrayHandler {
 
@@ -34,7 +35,7 @@ public class BottomTrayHandler {
         if (navHome != null) navHome.setOnClickListener(v -> navigate(HomeActivity.class));
         if (navReport != null) navReport.setOnClickListener(v -> navigate(FeedActivity.class));
         if (navCommunity != null) navCommunity.setOnClickListener(v -> navigate(CommunityActivity.class));
-        if (navProfile != null) navProfile.setOnClickListener(v -> navigate(ProfileActivity.class));
+        if (navProfile != null) navProfile.setOnClickListener(v -> navigate(SettingsActivity.class));
 
         highlightCurrentTab();
     }
@@ -64,7 +65,7 @@ public class BottomTrayHandler {
             updateTabUI(R.id.imageButtonReport, R.id.textViewReport, COLOR_ACTIVE);
         } else if (activity instanceof CommunityUserDisplayActivity || activity instanceof CommunityActivity) {
             updateTabUI(R.id.imageButtonCommunity, R.id.textViewCommunity, COLOR_ACTIVE);
-        } else if (activity instanceof ProfileActivity) {
+        } else if (activity instanceof SettingsActivity || activity instanceof ProfileActivity) {
             updateTabUI(R.id.imageButtonProfile, R.id.textViewProfile, COLOR_ACTIVE);
         }
     }

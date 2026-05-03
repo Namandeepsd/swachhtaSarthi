@@ -56,4 +56,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header" />
 
+    <TextView
+        android:id="@+id/tvEmptyNotifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No notifications yet"
+        android:textColor="#64748B"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/rvNotifications"
+        app:layout_constraintEnd_toEndOf="@id/rvNotifications"
+        app:layout_constraintStart_toStartOf="@id/rvNotifications"
+        app:layout_constraintTop_toTopOf="@id/rvNotifications" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

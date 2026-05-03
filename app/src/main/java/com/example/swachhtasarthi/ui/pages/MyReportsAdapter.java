@@ -41,9 +41,11 @@ public class MyReportsAdapter extends RecyclerView.Adapter<MyReportsAdapter.Repo
         String status = myReports.getStatus() == null ? "PENDING" : myReports.getStatus();
         holder.tvStatus.setText(status);
         
-        if (myReports.getImageUrl() != null && !myReports.getImageUrl().isEmpty()) {
+        String image = myReports.getImageUrl();
+        // Avoid crashing on stale content:// URIs (no permission on other devices/sessions)
+        if (image != null && !image.trim().isEmpty() && !image.startsWith("content://")) {
             Glide.with(holder.itemView.getContext())
-                    .load(myReports.getImageUrl())
+                    .load(image)
                     .placeholder(R.drawable.login_signup_hero_img)
                     .error(R.drawable.login_signup_hero_img)
                     .centerCrop()

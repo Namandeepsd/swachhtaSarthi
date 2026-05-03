@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.swachhtasarthi.R;
 import com.example.swachhtasarthi.service.FirebaseManagerAndAuth;
 import com.example.swachhtasarthi.model.MyReports;
@@ -29,7 +33,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.util.Collections;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -57,15 +63,31 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvNearestDistance;
     private TextView tvUserName;
     private TextView tvUserLocation;
+    private ImageView ivUserProfile;
+    private TextView tvScoreValue;
+    private TextView tvReportsCount;
+    private TextView tvResolvedCount;
+    private TextView tvPendingCount;
+    private TextView tvVolunteeringCount;
+    private TextView tvViewAll;
     private ImageView ivNotification;
+    private View notificationBadge;
     private FusedLocationProviderClient fusedLocationClient;
     private Marker userLocationMarker;
     private GeoPoint currentUserPoint;
     private final List<Marker> reportMarkers = new ArrayList<>();
     private final List<GeoPoint> pendingReportPoints = new ArrayList<>();
 
-    MyReportsAdapter myReportsAdapter;
-    List<MyReports> myReportsList = new ArrayList<>();
+    private MyReportsAdapter myReportsAdapter;
+    private final List<MyReports> myReportsList = new ArrayList<>();
+    private boolean showAllReports = false;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission granted
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +111,16 @@ public class HomeActivity extends AppCompatActivity {
         tvNearestDistance = findViewById(R.id.tvNearestDistance);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserLocation = findViewById(R.id.tvUserLocation);
+        ivUserProfile = findViewById(R.id.ivUserProfile);
+        tvScoreValue = findViewById(R.id.tvScoreValue);
+        tvReportsCount = findViewById(R.id.tvReportsCount);
+        tvResolvedCount = findViewById(R.id.tvResolvedCount);
+        tvPendingCount = findViewById(R.id.tvPendingCount);
+        tvVolunteeringCount = findViewById(R.id.tvVolunteeringCount);
+        tvViewAll = findViewById(R.id.tvViewAll);
         ivNotification = findViewById(R.id.ivNotification);
+        notificationBadge = findViewById(R.id.notificationBadge);
+        
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         BottomTrayHandler bottomTrayHandler = new BottomTrayHandler(this);
 
@@ -99,13 +130,8 @@ public class HomeActivity extends AppCompatActivity {
         loadLoggedInUserInNavbar();
         requestLocationAndShowOnMap();
         fetchPendingReportsForMap();
-
-        if (btnReport != null) {
-            btnReport.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, ReportActivity.class);
-                startActivity(intent);
-            });
-        }
+        checkImpendingNotifications();
+        requestNotificationPermission();
 
         if (ivNotification != null) {
             ivNotification.setOnClickListener(v -> {
@@ -114,11 +140,99 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
+        if (btnReport != null) {
+            btnReport.setOnClickListener(v -> {
+                Intent intent = new Intent(HomeActivity.this, ReportActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (tvViewAll != null) {
+            tvViewAll.setOnClickListener(v -> {
+                showAllReports = !showAllReports;
+                tvViewAll.setText(showAllReports ? "Show less" : "View all");
+                fetchMyReports();
+            });
+        }
+
         rvReports.setLayoutManager(new LinearLayoutManager(this));
         myReportsAdapter = new MyReportsAdapter(myReportsList);
         rvReports.setAdapter(myReportsAdapter);
 
         fetchMyReports();
+        fetchUserStats();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void checkImpendingNotifications() {
+        String uid = authManager.getCurrentUserUid();
+        if (uid == null || notificationBadge == null) return;
+
+        FirebaseFirestore.getInstance().collection("users")
+                .document(uid)
+                .collection("notifications")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(1)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) return;
+                    if (snapshots != null && !snapshots.isEmpty()) {
+                        notificationBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        notificationBadge.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void fetchUserStats() {
+        String uid = authManager.getCurrentUserUid();
+        if (uid == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Fetch user doc for score
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        long score = 0;
+                        Object val = doc.get("rewardScoreCurrent");
+                        if (val instanceof Number) score = ((Number) val).longValue();
+                        if (tvScoreValue != null) tvScoreValue.setText(String.valueOf(score));
+                    }
+                });
+
+        // Fetch reports for counts
+        db.collection("reports")
+                .whereEqualTo("userId", uid)
+                .get()
+                .addOnSuccessListener(snaps -> {
+                    int total = snaps.size();
+                    int resolved = 0;
+                    int pending = 0;
+                    for (QueryDocumentSnapshot doc : snaps) {
+                        String status = doc.getString("status");
+                        if ("RESOLVED".equalsIgnoreCase(status)) resolved++;
+                        else if ("PENDING".equalsIgnoreCase(status)) pending++;
+                    }
+                    if (tvReportsCount != null) tvReportsCount.setText(total + " Reports");
+                    if (tvResolvedCount != null) tvResolvedCount.setText(resolved + " Resolved");
+                    if (tvPendingCount != null) tvPendingCount.setText(pending + " Pending");
+                });
+
+        // Fetch volunteer actions
+        db.collection("volunteerActions")
+                .whereEqualTo("userId", uid)
+                .get()
+                .addOnSuccessListener(snaps -> {
+                    if (tvVolunteeringCount != null) tvVolunteeringCount.setText(snaps.size() + " Volunt.");
+                });
     }
 
     private void fetchMyReports() {
@@ -130,7 +244,9 @@ public class HomeActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     myReportsList.clear();
+                    List<ReportRow> rows = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        long createdAt = toLong(doc.get("createdAt"));
                         String description = valueOrFallback(doc.getString("description"), "No description");
                         String address = valueOrFallback(doc.getString("address"), doc.getString("location"));
                         String city = valueOrFallback(doc.getString("city"), doc.getString("title"));
@@ -141,13 +257,29 @@ public class HomeActivity extends AppCompatActivity {
                         String title = valueOrFallback(city, "Report");
                         String location = valueOrFallback(address, "Unknown Location");
 
-                        myReportsList.add(new MyReports(title, description, location, date, status, firstImage));
+                        rows.add(new ReportRow(createdAt, new MyReports(title, description, location, date, status, firstImage)));
+                    }
+
+                    Collections.sort(rows, (a, b) -> Long.compare(b.createdAt, a.createdAt));
+                    int max = showAllReports ? rows.size() : Math.min(3, rows.size());
+                    for (int i = 0; i < max; i++) {
+                        myReportsList.add(rows.get(i).report);
                     }
                     myReportsAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching reports: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private static class ReportRow {
+        final long createdAt;
+        final MyReports report;
+
+        ReportRow(long createdAt, MyReports report) {
+            this.createdAt = createdAt;
+            this.report = report;
+        }
     }
 
     private String valueOrFallback(String value, String fallback) {
@@ -253,6 +385,7 @@ public class HomeActivity extends AppCompatActivity {
                     String firstName = documentSnapshot.getString("firstName");
                     String lastName = documentSnapshot.getString("lastName");
                     String city = documentSnapshot.getString("city");
+                    String profileUrl = documentSnapshot.getString("profileImageUrl");
 
                     if ((firstName != null && !firstName.isEmpty()) || (lastName != null && !lastName.isEmpty())) {
                         String fullName = "";
@@ -267,6 +400,14 @@ public class HomeActivity extends AppCompatActivity {
 
                     if (city != null && !city.isEmpty() && tvUserLocation != null) {
                         tvUserLocation.setText(city);
+                    }
+
+                    if (profileUrl != null && !profileUrl.isEmpty() && ivUserProfile != null) {
+                        Glide.with(this)
+                                .load(profileUrl)
+                                .placeholder(R.drawable.profile_image)
+                                .circleCrop()
+                                .into(ivUserProfile);
                     }
                 });
     }
@@ -420,6 +561,18 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private long toLong(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        try {
+            String text = String.valueOf(value).trim();
+            return Long.parseLong(text);
+        } catch (Exception ignored) {
+            return 0L;
+        }
+    }
+
     private void updateNavbarCity(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -444,7 +597,10 @@ public class HomeActivity extends AppCompatActivity {
             mapView.onResume();
         }
         fetchMyReports(); // Refresh reports when returning to Home
+        fetchUserStats();
         fetchPendingReportsForMap();
+        checkImpendingNotifications();
+        loadLoggedInUserInNavbar(); // Also refresh user profile
     }
 
     @Override

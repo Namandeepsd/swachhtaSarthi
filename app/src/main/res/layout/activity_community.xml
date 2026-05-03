@@ -6,12 +6,49 @@
     android:layout_height="match_parent"
     android:background="#F8FAFC">
 
+    <!-- No Community View -->
+    <LinearLayout
+        android:id="@+id/layoutNoCommunity"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/report_icon"
+            app:tint="#CCCCCC" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="You haven't created a community yet"
+            android:textAlignment="center"
+            android:textColor="#666666"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreateCommunity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Create Community"
+            app:cornerRadius="8dp" />
+    </LinearLayout>
+
     <!-- Scrollable Content -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,16 +157,21 @@
                         app:layout_constraintTop_toBottomOf="@id/profileImage">
 
                         <LinearLayout
+                            android:id="@+id/layoutFollowers"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
                             <TextView
+                                android:id="@+id/tvFollowersCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="149"
+                                android:text="0"
                                 android:textColor="#1E293B"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -143,16 +185,21 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/layoutMembers"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
                             <TextView
+                                android:id="@+id/tvMembersCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="900"
+                                android:text="0"
                                 android:textColor="#1E293B"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -160,12 +207,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Score"
+                                android:text="Members"
                                 android:textColor="#64748B"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/layoutComplaints"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -173,9 +221,10 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvComplaintsCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="18"
+                                android:text="0"
                                 android:textColor="#1E293B"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -183,7 +232,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Complaints"
+                                android:text="Reports"
                                 android:textColor="#64748B"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -210,6 +259,21 @@
                             android:text="Follow"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
+                            android:visibility="gone"
+                            app:cornerRadius="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddMember"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="#135BEC"
+                            android:padding="12dp"
+                            android:text="Add Member"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
                             app:cornerRadius="8dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -294,7 +358,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="8dp"
-                        android:text="My Contributions"
+                        android:text="Community Activities"
                         android:textColor="#1E293B"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -309,7 +373,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="2dp"
                         android:layout_marginEnd="8dp"
-                        android:text="View all reports and activity"
+                        android:text="View community reports and contributions"
                         android:textColor="#64748B"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toStartOf="@id/tvContributionArrow"
@@ -331,40 +395,29 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Contribution Section -->
+            <!-- Community History Section -->
             <TextView
                 android:id="@+id/tvContribution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
-                android:text="Contributions"
+                android:text="Community Impact"
                 android:textColor="#1E293B"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardContributionRedirect" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/postCard"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCommunityReports"
                 android:layout_width="0dp"
-                android:layout_height="220dp"
-                android:layout_marginStart="20dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="20dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvContribution">
-
-                <ImageView
-                    android:id="@+id/postImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/new_post" />
-            </androidx.cardview.widget.CardView>
+                app:layout_constraintTop_toBottomOf="@id/tvContribution" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

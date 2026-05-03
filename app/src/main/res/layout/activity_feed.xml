@@ -7,7 +7,7 @@
 
     <include
         android:id="@+id/navbar"
-        layout="@layout/component_navbar"
+        layout="@layout/component_navbar_with_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />

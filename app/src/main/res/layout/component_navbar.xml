@@ -40,15 +40,32 @@
         app:layout_constraintTop_toBottomOf="@id/tvUserName"
         app:layout_constraintStart_toStartOf="@id/tvUserName" />
 
-    <ImageView
-        android:id="@+id/ivNotification"
+    <FrameLayout
+        android:id="@+id/notificationContainer"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/notification_icon"
-        android:padding="4dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="@id/ivUserProfile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/ivUserProfile" />
+        app:layout_constraintTop_toTopOf="@id/ivUserProfile">
+
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/notification_icon"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#0F172A" />
+
+        <View
+            android:id="@+id/notificationBadge"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_notification_badge"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

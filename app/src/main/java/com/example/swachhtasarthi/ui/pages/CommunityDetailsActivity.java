@@ -404,6 +404,9 @@ public class CommunityDetailsActivity extends AppCompatActivity {
         community.put("profileImage", profileUrl);
         community.put("channelImage", bannerUrl);
         community.put("createdBy", uid);
+        community.put("membersCount", 0);
+        community.put("followersCount", 0);
+        community.put("complaintsCount", 0);
 
         db.collection("community")
                 .document(uid)

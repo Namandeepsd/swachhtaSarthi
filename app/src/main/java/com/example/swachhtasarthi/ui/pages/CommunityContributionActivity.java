@@ -24,6 +24,7 @@ public class CommunityContributionActivity extends AppCompatActivity {
     private MyReportsAdapter adapter;
     private List<MyReports> contributionList = new ArrayList<>();
     private final FirebaseManagerAndAuth authManager = new FirebaseManagerAndAuth();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +39,37 @@ public class CommunityContributionActivity extends AppCompatActivity {
         adapter = new MyReportsAdapter(contributionList);
         rvContributions.setAdapter(adapter);
 
-        fetchContributions();
+        resolveCommunityAndFetch();
     }
 
-    private void fetchContributions() {
+    private void resolveCommunityAndFetch() {
         String uid = authManager.getCurrentUserUid();
         if (uid == null) return;
 
-        FirebaseFirestore.getInstance().collection("reports")
-                .whereEqualTo("userId", uid)
+        // Resolve communityId for the user first
+        db.collection("community")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        fetchCommunityContributions(uid);
+                    } else {
+                        db.collection("users").document(uid).get().addOnSuccessListener(userDoc -> {
+                            String joinedId = userDoc.getString("joinedCommunityId");
+                            if (joinedId != null && !joinedId.isEmpty()) {
+                                fetchCommunityContributions(joinedId);
+                            } else {
+                                Toast.makeText(this, "You are not part of any community", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+    }
+
+    private void fetchCommunityContributions(String communityId) {
+        db.collection("reports")
+                .whereEqualTo("communityId", communityId)
+                .whereEqualTo("reportByType", "community")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     contributionList.clear();
@@ -58,7 +81,7 @@ public class CommunityContributionActivity extends AppCompatActivity {
                         String status = valueOrFallback(doc.getString("status"), "PENDING");
 
                         String firstImage = extractFirstImage(doc);
-                        String title = valueOrFallback(city, "Report");
+                        String title = valueOrFallback(city, "Community Report");
                         String location = valueOrFallback(address, "Unknown Location");
 
                         contributionList.add(new MyReports(title, description, location, date, status, firstImage));
